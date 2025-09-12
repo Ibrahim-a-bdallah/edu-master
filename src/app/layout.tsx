@@ -1,3 +1,4 @@
+// "use client";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { store } from "../store";
@@ -29,7 +30,8 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <Provider store={store}>{children}</Provider>
+        {/* <Provider store={store}>{children}</Provider> */}
+        {children}
       </body>
     </html>
   );
