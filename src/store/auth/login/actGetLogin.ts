@@ -20,7 +20,8 @@ const actGetLogin = createAsyncThunk(
             token: token,
           },
         });
-        return response.data;
+        return { token, user: response.data };
+        
       }
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {

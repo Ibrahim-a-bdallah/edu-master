@@ -1,10 +1,12 @@
 import { createSlice } from "@reduxjs/toolkit";
 import actGetLogin from "./actGetLogin";
+
 interface LoginState {
   Loading: "idle" | "pending" | "succeeded" | "failed";
   errorMessage: string | null;
-  userData: any | null;
+  userData: { token: string; user: any } | null;
 }
+
 const initialState: LoginState = {
   Loading: "idle",
   errorMessage: null,
@@ -14,7 +16,22 @@ const initialState: LoginState = {
 const loginSlice = createSlice({
   name: "login",
   initialState,
-  reducers: {},
+  reducers: {
+    hydrateUser: (state) => {
+      if (typeof window !== "undefined") {
+        const savedData = localStorage.getItem("userData");
+        if (savedData) {
+          state.userData = JSON.parse(savedData);
+        }
+      }
+    },
+    logout: (state) => {
+      state.userData = null;
+      if (typeof window !== "undefined") {
+        localStorage.removeItem("userData");
+      }
+    },
+  },
   extraReducers: (builder) => {
     builder.addCase(actGetLogin.pending, (state) => {
       state.Loading = "pending";
@@ -22,7 +39,11 @@ const loginSlice = createSlice({
     });
     builder.addCase(actGetLogin.fulfilled, (state, action) => {
       state.Loading = "succeeded";
-      state.userData = action.payload.data;
+      state.userData = action.payload ? action.payload : null;
+
+      if (typeof window !== "undefined" && action.payload) {
+        localStorage.setItem("token", JSON.stringify(action.payload.token));
+      }
     });
     builder.addCase(actGetLogin.rejected, (state, action) => {
       state.Loading = "failed";
@@ -31,4 +52,5 @@ const loginSlice = createSlice({
   },
 });
 
+export const { hydrateUser, logout } = loginSlice.actions;
 export default loginSlice.reducer;
