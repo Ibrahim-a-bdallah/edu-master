@@ -14,15 +14,14 @@ import {
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useCallback, useEffect, useState } from "react";
+import { redirect, useRouter } from "next/navigation";
+import { useAppDispatch, useAppSelector } from "@/app/hooks/hooks";
+import actGetLogin from "@/store/auth/login/actGetLogin";
 
 // Improved validation schema with clearer error messages
 const formSchema = z.object({
-  username: z
-    .string()
-    .min(2, { message: "Username must be at least 2 characters" })
-    .max(50, { message: "Username cannot exceed 50 characters" }),
+  email: z.string().email({ message: "Invalid email address" }),
   password: z
     .string()
     .min(6, { message: "Password must be at least 6 characters" })
@@ -30,35 +29,46 @@ const formSchema = z.object({
 });
 
 const Login = () => {
-  const [showPassword, setShowPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const dispatch = useAppDispatch();
   const router = useRouter();
+  const { Loading, userData, errorMessage } = useAppSelector(
+    (state) => state.authLoginSlice
+  );
+  const [showPassword, setShowPassword] = useState(false);
+
+  const isLoading = Loading === "pending";
+
+  useEffect(() => {
+    if (Loading === "succeeded" && userData) {
+      if (userData.role === "admin") {
+        router.push("/teachers");
+      } else if (userData.role === "user") {
+        router.push("/students");
+      }
+    }
+  }, [Loading, userData, router]);
 
   // 1. Define form
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      username: "",
+      email: "",
       password: "",
     },
   });
 
   // 2. Submit handler
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    setIsLoading(true);
-    try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      console.log(values);
-      // Redirect after successful login
-      router.push("/dashboard");
-    } catch (error) {
-      console.error("Login failed:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
+  const onSubmit = useCallback(
+    async (values: z.infer<typeof formSchema>) => {
+      try {
+        await dispatch(actGetLogin(values)).unwrap();
+      } catch (error) {
+        // Error is already handled in the slice
+        console.error("Login failed:", error);
+      }
+    },
+    [dispatch]
+  );
   return (
     <div className="w-full max-w-md mx-auto p-6">
       <div className="mb-10 text-white">
@@ -71,13 +81,13 @@ const Login = () => {
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
           <FormField
             control={form.control}
-            name="username"
+            name="email"
             render={({ field }) => (
               <FormItem>
                 <FormControl>
                   <div className="relative">
                     <Input
-                      placeholder="Username"
+                      placeholder="Email"
                       className="border-transparent rounded-none p-0 pb-2 border-b-2 border-b-[#333437] focus:border-none focus:outline-none focus-visible:ring-0 pl-0 bg-transparent text-white"
                       {...field}
                       disabled={isLoading}

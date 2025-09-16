@@ -22,12 +22,13 @@ const lessons = () => {
         "https://edu-master-delta.vercel.app/lesson/?classLevel=Grade 1 Secondary&isPaid=true",
         {
           headers: {
-            token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im5vb3JoYW5AZ21haWwuY29tIiwiX2lkIjoiNjhjNTI4MzI3ODljNjliOTY4YTc2NTZlIiwiaWF0IjoxNzU3ODc2MDEyLCJleHAiOjE3NTc5NjI0MTJ9.iOUTIFEwaMKIo94TZMcd3-yqxKUWGRPa8TvmDpAFrZY",
+            token:
+              "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im5vb3JoYW5AZ21haWwuY29tIiwiX2lkIjoiNjhjNTI4MzI3ODljNjliOTY4YTc2NTZlIiwiaWF0IjoxNzU3ODc2MDEyLCJleHAiOjE3NTc5NjI0MTJ9.iOUTIFEwaMKIo94TZMcd3-yqxKUWGRPa8TvmDpAFrZY",
           },
         }
       );
       const data = await res.data;
-      // console.log("API response:", data);
+
       setLessonsData(data.data || []);
     } catch (error) {
       console.error("error", error);
@@ -64,16 +65,18 @@ const lessons = () => {
             </div>
 
             {/* Description */}
-            <p className="text-gray-600 mb-3 line-clamp-3">{lesson.description}</p>
+            <p className="text-gray-600 mb-3 line-clamp-3">
+              {lesson.description}
+            </p>
 
             {/* Date */}
             <p className="text-sm text-gray-500 mb-4">
               {lesson.scheduledDate
                 ? new Date(lesson.scheduledDate).toLocaleDateString("en-GB", {
-                  day: "2-digit",
-                  month: "short",
-                  year: "numeric",
-                })
+                    day: "2-digit",
+                    month: "short",
+                    year: "numeric",
+                  })
                 : "No schedule"}
             </p>
 
@@ -84,7 +87,9 @@ const lessons = () => {
                   Price: {lesson.price} EGP
                 </span>
               ) : (
-                <span className="text-green-600 font-medium text-lg">Free Lesson</span>
+                <span className="text-green-600 font-medium text-lg">
+                  Free Lesson
+                </span>
               )}
             </div>
             {/* Actions */}
@@ -106,7 +111,6 @@ const lessons = () => {
         ))}
       </div>
     </div>
-
   );
 };
 

@@ -116,7 +116,12 @@
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
+  }
+
+  Input {
+    @apply border-transparent rounded-none p-0 pb-2 border-b-2 border-b-[#333437] focus:border-none
   }
 }
