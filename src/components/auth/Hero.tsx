@@ -17,6 +17,7 @@ const Hero = () => {
         alt="AI Assistant"
         width={300}
         height={250}
+        priority
         className="absolute left-[80%] top-[10%] -translate-x-1/3 -translate-y-1/4  "
       />
       <Image
@@ -24,6 +25,7 @@ const Hero = () => {
         alt="AI Assistant"
         width={217}
         height={200.42}
+        priority
         className="absolute left-[80%] top-[10%] "
       />
       <Image
@@ -31,6 +33,7 @@ const Hero = () => {
         alt="AI Assistant"
         width={270.9}
         height={303.56}
+        priority
         className="absolute left-[50%] top-[0%] rotate-[40.89deg]  "
       />
       <Image
@@ -38,6 +41,7 @@ const Hero = () => {
         alt="AI Assistant"
         width={300}
         height={200}
+        priority
         className="absolute left-[-10%] top-[30%]   "
       />
       <Image
@@ -45,13 +49,15 @@ const Hero = () => {
         alt="AI Assistant"
         width={500}
         height={328}
+        priority
         className="absolute left-[20%] top-[65%] -translate-x-[10%] -translate-y-[40%] z-1000 "
-      />{" "}
+      />
       <Image
         src="/vector4.svg"
         alt="AI Assistant"
         width={1279.24}
         height={946.96}
+        priority
         className="absolute left-[10%] top-[80%]   -translate-x-[10%] -translate-y-[40%] "
       />
       <Image
@@ -59,6 +65,7 @@ const Hero = () => {
         alt="AI Assistant"
         width={270.9}
         height={303.56}
+        priority
         className="absolute left-[10%] top-[85%] -translate-x-[10%] -translate-y-[40%]  "
       />
     </div>

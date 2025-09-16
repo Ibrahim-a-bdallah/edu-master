@@ -1,16 +1,11 @@
-import React from "react";
-import LOGO from "../../../../assets/logo.png";
-import { useNavigate } from "react-router-dom";
-
-export default function page() {
-  // const navigate = useNavigate();
+export default function Navbar() {
   return (
     <>
       <div className=" md:w-[25%] lg:w-[15%] opacity-100 flex flex-col pl-3 pt-7 shadow-xl ">
         <div className="w-[204] h-[52] opacity-100 rounded-xl cursor-pointer flex">
-            <div className=" w-[52] h-[52] opacity-100 rounded-xl ">
-        <img src={LOGO.src} alt="" className=" w-10 h-10 opacity-100  " />
-            </div>
+          <div className=" w-[52] h-[52] opacity-100 rounded-xl ">
+            <img src="logo.png" alt="" className=" w-10 h-10 opacity-100  " />
+          </div>
           <p className="  opacity-100 font-semibold text-[25px] pr-1 ">
             Smansys
           </p>
