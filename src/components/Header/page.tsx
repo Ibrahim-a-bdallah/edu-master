@@ -1,6 +1,6 @@
 export default function Header() {
   return (
-    <div className="w-[85%] h-16 opacity-100 left-[160px] md:left-[190px] bg-[#9C6FE4] flex justify-between items-center pl-3 pr-6">
+    <div className="w-full h-16 opacity-100 left-[160px] md:left-[190px] bg-[#9C6FE4] flex justify-between items-center pl-3 pr-6">
       <p className=" opacity-100 font-semibold text-xl md:text-2xl lg:text-[32px] leading-[100%] tracking-[0%] left-[324px] top-8 text-[#FFFFFF]">
         Hii, Devendra
       </p>

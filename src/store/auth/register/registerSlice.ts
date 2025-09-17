@@ -31,7 +31,7 @@ const signUpSlice = createSlice({
   name: "signUp",
   initialState,
   reducers: {
-    resetState: () => initialState,
+    Logout: () => initialState,
     clearError: (state) => {
       state.errorMessage = null;
     },
@@ -61,5 +61,5 @@ const signUpSlice = createSlice({
   },
 });
 
-export const { resetState, clearError, clearSuccess } = signUpSlice.actions;
+export const { Logout, clearError, clearSuccess } = signUpSlice.actions;
 export default signUpSlice.reducer;

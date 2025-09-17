@@ -18,6 +18,8 @@ import { useCallback, useEffect, useState } from "react";
 import { redirect, useRouter } from "next/navigation";
 import { useAppDispatch, useAppSelector } from "@/app/hooks/hooks";
 import actGetLogin from "@/store/auth/login/actGetLogin";
+import { toast } from "sonner";
+import { resetError } from "@/store/auth/login/loginSlice";
 
 // Improved validation schema with clearer error messages
 const formSchema = z.object({
@@ -29,22 +31,50 @@ const formSchema = z.object({
 });
 
 const Login = () => {
+  console.log("Rendering Login Component");
   const dispatch = useAppDispatch();
   const router = useRouter();
   const { Loading, userData, errorMessage } = useAppSelector(
     (state) => state.authLoginSlice
   );
+
   const [showPassword, setShowPassword] = useState(false);
+  const [hasDisplayedError, setHasDisplayedError] = useState(false);
 
   const isLoading = Loading === "pending";
 
+  // إصلاح: استخدام useEffect لعرض الخطأ مرة واحدة فقط
+  useEffect(() => {
+    if (errorMessage && !hasDisplayedError) {
+      toast.error(errorMessage);
+      setHasDisplayedError(true);
+
+      // reset الخطأ بعد 3 ثواني
+      const timer = setTimeout(() => {
+        dispatch(resetError());
+        setHasDisplayedError(false);
+      }, 3000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [errorMessage, hasDisplayedError, dispatch]);
+
+  // إصلاح: إضافة cleanup function لـ reset الحالة
+  useEffect(() => {
+    return () => {
+      // تنظيف حالة الخطأ عند إلغاء mounting المكون
+      dispatch(resetError());
+    };
+  }, [dispatch]);
+
   useEffect(() => {
     if (Loading === "succeeded" && userData) {
-      if (userData.role === "admin") {
-        router.push("/teachers");
-      } else if (userData.role === "user") {
-        router.push("/students");
+      if (userData.data.role === "admin") {
+        redirect("/teachers");
+      } else if (userData.data.role === "user") {
+        redirect("/students");
       }
+      toast.success("Login successful!");
     }
   }, [Loading, userData, router]);
 
@@ -60,6 +90,10 @@ const Login = () => {
   // 2. Submit handler
   const onSubmit = useCallback(
     async (values: z.infer<typeof formSchema>) => {
+      // reset حالة الخطأ قبل محاولة جديدة
+      dispatch(resetError());
+      setHasDisplayedError(false);
+
       try {
         await dispatch(actGetLogin(values)).unwrap();
       } catch (error) {
@@ -69,6 +103,7 @@ const Login = () => {
     },
     [dispatch]
   );
+
   return (
     <div className="w-full max-w-md mx-auto p-6">
       <div className="mb-10 text-white">

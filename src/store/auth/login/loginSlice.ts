@@ -4,7 +4,8 @@ import actGetLogin from "./actGetLogin";
 interface LoginState {
   Loading: "idle" | "pending" | "succeeded" | "failed";
   errorMessage: string | null;
-  userData: { token: string; user: any } | null;
+  userData: any;
+  tokan?: string | null;
 }
 
 const initialState: LoginState = {
@@ -17,19 +18,14 @@ const loginSlice = createSlice({
   name: "login",
   initialState,
   reducers: {
-    hydrateUser: (state) => {
-      if (typeof window !== "undefined") {
-        const savedData = localStorage.getItem("userData");
-        if (savedData) {
-          state.userData = JSON.parse(savedData);
-        }
-      }
-    },
     logout: (state) => {
       state.userData = null;
-      if (typeof window !== "undefined") {
-        localStorage.removeItem("userData");
-      }
+      state.tokan = null;
+      state.errorMessage = null;
+      state.Loading = "idle";
+    },
+    resetError: (state) => {
+      state.errorMessage = null;
     },
   },
   extraReducers: (builder) => {
@@ -39,10 +35,12 @@ const loginSlice = createSlice({
     });
     builder.addCase(actGetLogin.fulfilled, (state, action) => {
       state.Loading = "succeeded";
-      state.userData = action.payload ? action.payload : null;
-
-      if (typeof window !== "undefined" && action.payload) {
-        localStorage.setItem("token", JSON.stringify(action.payload.token));
+      if (action.payload) {
+        state.userData = action.payload.user;
+        state.tokan = action.payload.token;
+      } else {
+        state.userData = null;
+        state.tokan = null;
       }
     });
     builder.addCase(actGetLogin.rejected, (state, action) => {
@@ -52,5 +50,5 @@ const loginSlice = createSlice({
   },
 });
 
-export const { hydrateUser, logout } = loginSlice.actions;
+export const { logout, resetError } = loginSlice.actions;
 export default loginSlice.reducer;

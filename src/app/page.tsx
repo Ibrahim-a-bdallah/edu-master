@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { useAppSelector } from "./hooks/hooks";
 
 export default function Home() {
+  console.log("User Data on Home Page:");
   const { userData } = useAppSelector((state) => state.authLoginSlice);
   console.log("User Data on Home Page:", userData);
   if (userData) {
@@ -13,5 +14,5 @@ export default function Home() {
       return redirect("/students");
     }
   }
-  return redirect("/login");
+  // return redirect("/login");
 }
