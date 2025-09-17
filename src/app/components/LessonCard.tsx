@@ -2,7 +2,8 @@ import { Lesson } from "@/app/types/lesson";
 
 interface LessonCardProps {
   lesson: Lesson;
-}const LessonCard = ({ lesson }: LessonCardProps) => {
+}
+const LessonCard = ({ lesson }: LessonCardProps) => {
   return (
     <div className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition p-6 flex flex-col">
       {/* Header */}
@@ -12,10 +13,8 @@ interface LessonCardProps {
           {lesson.classLevel}
         </span>
       </div>
-
       {/* Description */}
       <p className="text-gray-600 mb-3 line-clamp-3">{lesson.description}</p>
-
       {/* Date */}
       <p className="text-sm text-gray-500 mb-4">
         {lesson.scheduledDate
@@ -26,7 +25,6 @@ interface LessonCardProps {
           })
           : "No schedule"}
       </p>
-
       {/* Price */}
       <div className="mb-4">
         {lesson.isPaid ? (
@@ -39,18 +37,19 @@ interface LessonCardProps {
           </span>
         )}
       </div>
-
       {/* Actions */}
-      <div className="mt-auto flex gap-3">
-        <a
-          href={lesson.video}
-          target="_blank"
-          className="flex-1 text-center px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition"
-        >
-          Watch
-        </a>
+      <div className="mt-auto  ">
+        <iframe
+          width="100%"
+          height="250"
+          src={lesson.video.replace("watch?v=", "embed/")}
+          title={lesson.title}
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowFullScreen
+          className="rounded-lg"
+        ></iframe>
         {lesson.isPaid && (
-          <button className="flex-1 px-4 py-2 rounded-lg bg-purple-600 text-white hover:bg-purple-700 transition cursor-pointer">
+          <button className="flex-1 px-4 py-2 mt-2 rounded-lg bg-purple-600 text-white hover:bg-purple-700 transition cursor-pointer w-full">
             Pay
           </button>
         )}
