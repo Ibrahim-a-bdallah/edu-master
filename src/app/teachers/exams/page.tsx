@@ -18,9 +18,8 @@ import {
 import Loading from "@/components/Loading";
 export default function Page() {
   const dispatch = useAppDispatch();
-  const { userData } = useAppSelector((state) => state.authLoginSlice);
-  const token = userData?.token;
-
+  const { tokan } = useAppSelector((state) => state.authLoginSlice);
+  console.log("token", tokan);
   const filteredExams = useAppSelector(selectFilteredExams);
   const loading = useAppSelector(selectLoading);
   const error = useAppSelector(selectError);
@@ -28,10 +27,10 @@ export default function Page() {
   const activeTab = useAppSelector(selectActiveTab);
 
   useEffect(() => {
-    if (token) {
-      dispatch(fetchExams(token));
+    if (tokan) {
+      dispatch(fetchExams(tokan));
     }
-  }, [dispatch, token]);
+  }, [dispatch, tokan]);
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     dispatch(setSearchTerm(e.target.value));
@@ -53,7 +52,7 @@ export default function Page() {
           <h2 className="text-xl font-semibold text-red-600 mb-2">Error</h2>
           <p className="text-gray-600 mb-4">{error}</p>
           <button
-            onClick={() => token && dispatch(fetchExams(token))}
+            onClick={() => tokan && dispatch(fetchExams(tokan))}
             className="bg-main text-white px-4 py-2 rounded-lg hover:bg-main/90"
           >
             Try Again
@@ -99,7 +98,7 @@ export default function Page() {
             History
           </h2>
         </div>
-        
+
         <div className="w-full md:w-auto mt-4 md:mt-0">
           <input
             type="text"
@@ -110,7 +109,7 @@ export default function Page() {
           />
         </div>
       </div>
-      
+
       <div>
         {activeTab === "scheduled" ? (
           <div className="p-4 md:p-8">

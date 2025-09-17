@@ -14,5 +14,5 @@ export default function Home() {
       return redirect("/students");
     }
   }
-  // return redirect("/login");
+  return redirect("/login");
 }

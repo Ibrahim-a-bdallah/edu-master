@@ -12,6 +12,7 @@ const initialState: LoginState = {
   Loading: "idle",
   errorMessage: null,
   userData: null,
+  tokan: null,
 };
 
 const loginSlice = createSlice({

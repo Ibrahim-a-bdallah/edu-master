@@ -2,6 +2,7 @@ import { configureStore } from "@reduxjs/toolkit";
 import authLoginSlice from "./auth/login/loginSlice";
 import signUpReducer from "./auth/register/registerSlice";
 import examReducer from "./teachers/exams/examSlice";
+import lessonSlice from "./lessons/lessonSlice";
 export const makeStore = () => {
   return configureStore({
     reducer: {
@@ -9,6 +10,7 @@ export const makeStore = () => {
       authLoginSlice: authLoginSlice,
       examSlice: examReducer,
       authSignUp: signUpReducer,
+      lessons: lessonSlice,
     },
   });
 };

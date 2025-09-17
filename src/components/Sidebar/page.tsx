@@ -57,7 +57,7 @@ export default function Sidebar() {
             <h3>Live Classes</h3>
           </Link>
           <Link
-            href="/teachers/schedule"
+            href="/students/lessons"
             className="flex gap-3 w-[100%] p-2 cursor-pointer  hover:bg-[#9C6FE4]"
             // onClick={() => navigate("/users")}
           >
@@ -74,7 +74,7 @@ export default function Sidebar() {
               />
             </svg>
 
-            <h3>Schedule</h3>
+            <h3>Lessons</h3>
           </Link>
           <Link
             href="/teachers/students"
