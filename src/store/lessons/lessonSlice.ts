@@ -18,7 +18,7 @@ export const fetchLessons = createAsyncThunk<Lesson[]>( // async thunk for fetch
     try {
       const res = await axios.get("https://edu-master-delta.vercel.app/lesson", {
       headers: {
-        token:"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im5vdXJoYW50YWhhNTg4QGdtYWlsLmNvbSIsIl9pZCI6IjY4YzgzMmRiZWZhYTE4OWQwMDM5MDBhNSIsImlhdCI6MTc1ODEwOTYwMiwiZXhwIjoxNzU4MTk2MDAyfQ.wZLYA6t4jg7vAimCUz627ixprSE7MzRwoGEpmiGA5Lw", 
+        token:"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im5vdXJoYW50YWhhNTg4QGdtYWlsLmNvbSIsIl9pZCI6IjY4YzgzMmRiZWZhYTE4OWQwMDM5MDBhNSIsImlhdCI6MTc1ODIwMTE4MywiZXhwIjoxNzU4Mjg3NTgzfQ.KJk9_hHuX7X1tObWqCdKe_HJvxDw2mhbH_SuL1tOcOo", 
       }
       });
       return res.data.data || [];
