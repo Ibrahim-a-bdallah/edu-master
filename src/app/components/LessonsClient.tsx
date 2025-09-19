@@ -1,17 +1,18 @@
 "use client";
-
-import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 // import { RootState, AppDispatch } from "@/store";
+// import { useAppDispatch, useAppSelector } from "../hooks/hooks";
+// import { RootState } from "@/store/store";
+//const { token } = useAppSelector((state) => state.authLoginSlice); // Access lessons state
+  // const { lessons, loading, error } = useSelector((state: RootState) => state.lessons);
+import { useEffect } from "react";
 import { fetchLessons } from "@/store/lessons/lessonSlice";
 import LessonCard from "@/app/components/LessonCard";
 import { useAppDispatch, useAppSelector } from "../hooks/hooks";
-
 const LessonsClient = () => {
   const dispatch = useAppDispatch();
   const { lessons, loading, error } = useAppSelector((state) => state.lessons); // Access lessons state
-  const { token } = useAppSelector((state) => state.authLoginSlice); // Access lessons state
-
+  const token= "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im5vdXJoYW50YWhhNTg4QGdtYWlsLmNvbSIsIl9pZCI6IjY4YzgzMmRiZWZhYTE4OWQwMDM5MDBhNSIsImlhdCI6MTc1ODI4NjI4NSwiZXhwIjoxNzU4MzcyNjg1fQ.dYh3J9Gdm64E8_aC0yTxPP4pZC9zsbX0qyK_SVMaQ88";
   useEffect(() => {
     dispatch(fetchLessons(token));
   }, [dispatch]);
@@ -32,5 +33,4 @@ const LessonsClient = () => {
     </div>
   );
 };
-
 export default LessonsClient;
