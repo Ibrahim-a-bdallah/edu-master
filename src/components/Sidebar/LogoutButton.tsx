@@ -12,7 +12,7 @@ export default function LogoutButton() {
   return (
     <Link
       href="/login"
-      className="font-semibold flex gap-2 w-[70%] p-2 cursor-pointer rounded-lg mt-10 bg-[#9C6FE4] justify-center"
+      className=" pl-8 cursor-pointer text-md "
       onClick={() => {
         dispatch(logout());
       }}
