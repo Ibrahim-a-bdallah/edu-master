@@ -52,13 +52,11 @@ export function DropdownMenuCheckboxes() {
         </div>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56">
-        <DropdownMenuCheckboxItem
-          checked={showPanel}
-          onCheckedChange={setShowPanel}
-          className="text-lg"
+        <p
+          className="text-lg flex justify-center hover:bg-[#9C6FE4] cursor-pointer py-2 rounded-md" 
         >
-          Sginup
-        </DropdownMenuCheckboxItem>
+          SGINUP
+        </p>
         <LogoutButton />
       </DropdownMenuContent>
     </DropdownMenu>

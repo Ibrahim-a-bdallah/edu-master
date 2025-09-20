@@ -12,7 +12,7 @@ export default function LogoutButton() {
   return (
     <Link
       href="/login"
-      className=" pl-8 cursor-pointer text-md "
+      className="  cursor-pointer flex justify-center hover:bg-[#9C6FE4] py-2 rounded-md "
       onClick={() => {
         dispatch(logout());
       }}
