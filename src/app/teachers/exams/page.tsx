@@ -18,8 +18,8 @@ import {
 import Loading from "@/components/Loading";
 export default function Page() {
   const dispatch = useAppDispatch();
-  const { tokan } = useAppSelector((state) => state.authLoginSlice);
-  console.log("token", tokan);
+  const { token } = useAppSelector((state) => state.auth);
+
   const filteredExams = useAppSelector(selectFilteredExams);
   const loading = useAppSelector(selectLoading);
   const error = useAppSelector(selectError);
@@ -27,10 +27,10 @@ export default function Page() {
   const activeTab = useAppSelector(selectActiveTab);
 
   useEffect(() => {
-    if (tokan) {
-      dispatch(fetchExams(tokan));
+    if (token) {
+      dispatch(fetchExams(token));
     }
-  }, [dispatch, tokan]);
+  }, [dispatch, token]);
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     dispatch(setSearchTerm(e.target.value));
@@ -52,7 +52,7 @@ export default function Page() {
           <h2 className="text-xl font-semibold text-red-600 mb-2">Error</h2>
           <p className="text-gray-600 mb-4">{error}</p>
           <button
-            onClick={() => tokan && dispatch(fetchExams(tokan))}
+            onClick={() => token && dispatch(fetchExams(token))}
             className="bg-main text-white px-4 py-2 rounded-lg hover:bg-main/90"
           >
             Try Again

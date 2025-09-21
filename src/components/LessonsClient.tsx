@@ -4,13 +4,13 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 // import { RootState, AppDispatch } from "@/store";
 import { fetchLessons } from "@/store/lessons/lessonSlice";
-import LessonCard from "@/app/components/LessonCard";
-import { useAppDispatch, useAppSelector } from "../hooks/hooks";
+import LessonCard from "@/components/LessonCard";
+import { useAppDispatch, useAppSelector } from "../app/hooks/hooks";
 
 const LessonsClient = () => {
   const dispatch = useAppDispatch();
   const { lessons, loading, error } = useAppSelector((state) => state.lessons); // Access lessons state
-  const { token } = useAppSelector((state) => state.authLoginSlice); // Access lessons state
+  const { token } = useAppSelector((state) => state.auth); // Access lessons state
 
   useEffect(() => {
     dispatch(fetchLessons(token));
@@ -25,9 +25,10 @@ const LessonsClient = () => {
         Lessons
       </h1>
       <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-        {lessons.map((lesson) => (
-          <LessonCard key={lesson._id} lesson={lesson} />
-        ))}
+        {lessons.length > 0 &&
+          lessons.map((lesson) => (
+            <LessonCard key={lesson._id} lesson={lesson} />
+          ))}
       </div>
     </div>
   );

@@ -15,7 +15,7 @@ import { Input } from "@/components/ui/input";
 import Link from "next/link";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
-import { redirect, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useAppDispatch, useAppSelector } from "@/app/hooks/hooks";
 import actGetLogin from "@/store/auth/login/actGetLogin";
 import { toast } from "sonner";
@@ -31,11 +31,10 @@ const formSchema = z.object({
 });
 
 const Login = () => {
-  console.log("Rendering Login Component");
   const dispatch = useAppDispatch();
   const router = useRouter();
-  const { Loading, userData, errorMessage } = useAppSelector(
-    (state) => state.authLoginSlice
+  const { Loading, errorMessage, userData } = useAppSelector(
+    (state) => state.auth
   );
 
   const [showPassword, setShowPassword] = useState(false);
@@ -69,12 +68,13 @@ const Login = () => {
 
   useEffect(() => {
     if (Loading === "succeeded" && userData) {
-      if (userData.data.role === "admin") {
-        redirect("/teachers");
-      } else if (userData.data.role === "user") {
-        redirect("/students");
-      }
       toast.success("Login successful!");
+
+      if (userData.data.role === "admin") {
+        router.push("/teachers");
+      } else if (userData.data.role === "user") {
+        router.push("/students");
+      }
     }
   }, [Loading, userData, router]);
 
@@ -158,7 +158,7 @@ const Login = () => {
                   </div>
                 </FormControl>
                 <Link
-                  href="#"
+                  href="/forget-password"
                   className="text-sm text-[#925FE2] float-right mt-2 hover:underline"
                 >
                   Forgot Password?

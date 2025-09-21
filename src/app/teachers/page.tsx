@@ -4,8 +4,7 @@ import Sidebar from "@/components/Sidebar/page";
 import { useAppSelector } from "../hooks/hooks";
 
 const Teachers = () => {
-  // const { userData } = useAppSelector((state) => state.authLoginSlice);
-
+  // const { userData } = useAppSelector((state) => state.auth);
   // console.log("User Data:", userData);
   return (
     <div>

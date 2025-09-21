@@ -35,7 +35,6 @@ const users = () => {
       const data = await res.data;
 
       setusersData(data.data || []);
-      console.log(data.data);
     } catch (error) {
       console.error("error", error);
     } finally {

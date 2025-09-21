@@ -5,14 +5,14 @@ interface LoginState {
   Loading: "idle" | "pending" | "succeeded" | "failed";
   errorMessage: string | null;
   userData: any;
-  tokan?: string | null;
+  token?: string | null;
 }
 
 const initialState: LoginState = {
   Loading: "idle",
   errorMessage: null,
   userData: null,
-  tokan: null,
+  token: null,
 };
 
 const loginSlice = createSlice({
@@ -21,7 +21,7 @@ const loginSlice = createSlice({
   reducers: {
     logout: (state) => {
       state.userData = null;
-      state.tokan = null;
+      state.token = null;
       state.errorMessage = null;
       state.Loading = "idle";
     },
@@ -38,10 +38,10 @@ const loginSlice = createSlice({
       state.Loading = "succeeded";
       if (action.payload) {
         state.userData = action.payload.user;
-        state.tokan = action.payload.token;
+        state.token = action.payload.token;
       } else {
         state.userData = null;
-        state.tokan = null;
+        state.token = null;
       }
     });
     builder.addCase(actGetLogin.rejected, (state, action) => {

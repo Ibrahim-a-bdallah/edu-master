@@ -4,13 +4,12 @@ import { redirect } from "next/navigation";
 import { useAppSelector } from "./hooks/hooks";
 
 export default function Home() {
-  console.log("User Data on Home Page:");
-  const { userData } = useAppSelector((state) => state.authLoginSlice);
-  console.log("User Data on Home Page:", userData);
+  const { userData } = useAppSelector((state) => state.auth);
+
   if (userData) {
-    if (userData.role === "admin") {
+    if (userData.data.role === "admin") {
       return redirect("/teachers");
-    } else if (userData.role === "user") {
+    } else if (userData.data.role === "user") {
       return redirect("/students");
     }
   }

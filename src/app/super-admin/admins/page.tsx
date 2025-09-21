@@ -37,7 +37,6 @@ const admins = () => {
       const data = await res.data;
 
       setAdminsData(data.data || []);
-      console.log(data.data);
     } catch (error) {
       console.error("error", error);
     } finally {
