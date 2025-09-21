@@ -1,8 +1,11 @@
 "use client";
-
-import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 // import { RootState, AppDispatch } from "@/store";
+// import { useAppDispatch, useAppSelector } from "../hooks/hooks";
+// import { RootState } from "@/store/store";
+//const { token } = useAppSelector((state) => state.authLoginSlice); // Access lessons state
+// const { lessons, loading, error } = useSelector((state: RootState) => state.lessons);
+import { useEffect } from "react";
 import { fetchLessons } from "@/store/lessons/lessonSlice";
 import LessonCard from "@/components/LessonCard";
 import { useAppDispatch, useAppSelector } from "../app/hooks/hooks";
@@ -33,5 +36,4 @@ const LessonsClient = () => {
     </div>
   );
 };
-
 export default LessonsClient;

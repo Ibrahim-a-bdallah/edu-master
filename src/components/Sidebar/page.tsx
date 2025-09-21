@@ -1,5 +1,5 @@
 import Link from "next/link";
-import LogoutButton from "./LogoutButton";
+
 
 export default function Sidebar() {
   return (
@@ -77,7 +77,7 @@ export default function Sidebar() {
             <h3>Lessons</h3>
           </Link>
           <Link
-            href="/teachers/students"
+            href="/teachers/users"
             className="flex gap-3 w-[100%] p-2 cursor-pointer hover:bg-[#9C6FE4] "
             // onClick={() => navigate("/users")}
           >
@@ -135,7 +135,6 @@ export default function Sidebar() {
             <h3>Assignments</h3>
           </Link>
         </div>
-        <LogoutButton />
       </div>
     </>
   );

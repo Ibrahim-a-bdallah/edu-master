@@ -8,14 +8,11 @@ interface LessonState {
   loading: boolean;
   error: string | null;
 }
-
 const initialState: LessonState = {
   lessons: [],
   loading: false,
   error: null,
 };
-
-// تعديل createAsyncThunk لقبول token كمعامل
 export const fetchLessons = createAsyncThunk<Lesson[], string>(
   "lessons/fetchLessons",
   async (token: string) => {
@@ -31,7 +28,6 @@ export const fetchLessons = createAsyncThunk<Lesson[], string>(
     }
   }
 );
-
 const lessonSlice = createSlice({
   name: "lessons",
   initialState,

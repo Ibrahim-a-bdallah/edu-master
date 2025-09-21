@@ -12,7 +12,7 @@ export default function LogoutButton() {
   return (
     <Link
       href="/login"
-      className="font-semibold flex gap-2 w-[70%] p-2 cursor-pointer rounded-lg mt-10 bg-[#9C6FE4] justify-center"
+      className="  cursor-pointer flex justify-center hover:bg-[#9C6FE4] py-2 rounded-md "
       onClick={() => {
         dispatch(logout());
       }}

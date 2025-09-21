@@ -1,60 +1,65 @@
 import { Lesson } from "@/app/types/lesson";
-
+import { handleCheckout } from "@/lib/checkout";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
 interface LessonCardProps {
   lesson: Lesson;
 }
 const LessonCard = ({ lesson }: LessonCardProps) => {
   return (
-    <div className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition p-6 flex flex-col">
+    <Card className="rounded-2xl shadow-lg hover:shadow-xl transition flex flex-col">
       {/* Header */}
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-xl font-semibold text-gray-800">{lesson.title}</h2>
-        <span className="px-3 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-700">
+      <CardHeader className="flex flex-row items-center justify-between">
+        <CardTitle className="text-lg font-semibold text-gray-800">{lesson.title}</CardTitle>
+        <Badge variant="secondary" className="bg-blue-100 text-blue-700">
           {lesson.classLevel}
-        </span>
-      </div>
-      {/* Description */}
-      <p className="text-gray-600 mb-3 line-clamp-3">{lesson.description}</p>
-      {/* Date */}
-      <p className="text-sm text-gray-500 mb-4">
-        {lesson.scheduledDate
-          ? new Date(lesson.scheduledDate).toLocaleDateString("en-GB", {
-            day: "2-digit",
-            month: "short",
-            year: "numeric",
-          })
-          : "No schedule"}
-      </p>
-      {/* Price */}
-      <div className="mb-4">
-        {lesson.isPaid ? (
-          <span className="text-red-500 font-medium text-lg">
-            Price: {lesson.price} EGP
-          </span>
-        ) : (
-          <span className="text-green-600 font-medium text-lg">
-            Free Lesson
-          </span>
-        )}
-      </div>
-      {/* Actions */}
-      <div className="mt-auto  ">
-        <iframe
-          width="100%"
-          height="250"
-          src={lesson.video.replace("watch?v=", "embed/")}
-          title={lesson.title}
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          allowFullScreen
-          className="rounded-lg"
-        ></iframe>
-        {lesson.isPaid && (
-          <button className="flex-1 px-4 py-2 mt-2 rounded-lg bg-purple-600 text-white hover:bg-purple-700 transition cursor-pointer w-full">
-            Pay
-          </button>
-        )}
-      </div>
-    </div>
+        </Badge>
+      </CardHeader>
+      {/* Content */}
+      <CardContent className="flex flex-col gap-3">
+        {/* Description */}
+        <p className="text-gray-600 line-clamp-3">{lesson.description}</p>
+        {/* Date */}
+        <p className="text-sm text-gray-500">
+          {lesson.scheduledDate
+            ? new Date(lesson.scheduledDate).toLocaleDateString("en-GB", {
+              day: "2-digit",
+              month: "short",
+              year: "numeric",
+            })
+            : "No schedule"}
+            </p>
+        {/* Price */}
+        <div>
+          {lesson.isPaid ? (
+            <span className="text-red-500 font-medium text-lg">Price: {lesson.price} EGP</span>
+          ) : (
+            <span className="text-green-600 font-medium text-lg">Free Lesson</span>
+          )}
+        </div>
+        {/* Actions */}
+        <div className="flex flex-col gap-2 mt-2">
+          <iframe
+            width="100%"
+            height="220"
+            src={lesson.video.replace("watch?v=", "embed/")}
+            title={lesson.title}
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+            className="rounded-lg"
+          ></iframe>
+          {lesson.isPaid && (
+            <Button
+              onClick={() => handleCheckout(lesson)}
+              className="bg-purple-600 hover:bg-purple-700 w-full"
+            >
+              Pay
+            </Button>
+          )}
+        </div>
+      </CardContent>
+    </Card>
   );
 };
 export default LessonCard;
