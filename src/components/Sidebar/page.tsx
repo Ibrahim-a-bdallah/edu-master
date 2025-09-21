@@ -1,5 +1,5 @@
 import Link from "next/link";
-import LogoutButton from "./LogoutButton";
+
 
 export default function Sidebar() {
   return (
@@ -135,7 +135,6 @@ export default function Sidebar() {
             <h3>Assignments</h3>
           </Link>
         </div>
-        <LogoutButton />
       </div>
     </>
   );
