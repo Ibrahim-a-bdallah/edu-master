@@ -11,7 +11,7 @@ const LessonsAdminClient = () => {
 
   useEffect(() => {
     dispatch(fetchAdminLessons(token));
-  }, [dispatch ]);
+  }, [dispatch]);
 
   if (loading) return <p className="text-center py-8">Loading lessons...</p>;
   if (error) return <p className="text-center py-8 text-red-500">{error}</p>;
