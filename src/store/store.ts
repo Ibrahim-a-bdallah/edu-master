@@ -9,7 +9,11 @@ import authSlice from "./auth/forgetpassword";
 import examReducer from "./teachers/exams/examSlice";
 import signUpReducer from "./auth/register/registerSlice";
 import lessonSlice from "./lessons/lessonSlice";
+
 import lessonAdminSlice from "./lessons/lessonAdminSlice";
+
+import questionReducer from './teachers/questions/questionSlice';
+
 
 const persistConfig = {
   key: "root",
@@ -25,7 +29,11 @@ const rootReducer = combineReducers({
   examSlice: examReducer,
   authSignUp: signUpReducer,
   lessons: lessonSlice,
+
   lessonsAdmin : lessonAdminSlice,
+
+  questions: questionReducer,
+
 });
 
 // حل مشكلة الـ typing هنا
