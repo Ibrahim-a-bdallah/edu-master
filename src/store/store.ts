@@ -9,6 +9,7 @@ import authSlice from "./auth/forgetpassword";
 import examReducer from "./teachers/exams/examSlice";
 import signUpReducer from "./auth/register/registerSlice";
 import lessonSlice from "./lessons/lessonSlice";
+import lessonAdminSlice from "./lessons/lessonAdminSlice";
 
 const persistConfig = {
   key: "root",
@@ -24,6 +25,7 @@ const rootReducer = combineReducers({
   examSlice: examReducer,
   authSignUp: signUpReducer,
   lessons: lessonSlice,
+  lessonsAdmin : lessonAdminSlice,
 });
 
 // حل مشكلة الـ typing هنا

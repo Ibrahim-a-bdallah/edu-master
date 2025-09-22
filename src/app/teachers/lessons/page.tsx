@@ -1,7 +1,8 @@
+import LessonsAdminClient from "@/components/lessonAdminClient";
 import React from "react";
 
 const lessons = () => {
-  return <div>lessons</div>;
+   return <LessonsAdminClient />;
 };
 
 export default lessons;
