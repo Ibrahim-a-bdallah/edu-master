@@ -3,18 +3,19 @@ import { useEffect, useState } from "react";
 import { fetchLessons } from "@/store/lessons/lessonSlice";
 import LessonCard from "@/components/LessonCard";
 import { useAppDispatch, useAppSelector } from "../app/hooks/hooks";
+import { Lesson } from "@/app/types/lesson";
 
 const LessonsClient = () => {
   const dispatch = useAppDispatch();
-  const { lessons, loading, error } = useAppSelector((state) => state.lessons); // Access lessons state
-  const { token } = useAppSelector((state) => state.auth); // Access lessons state
+  const { lessons, loading, error } = useAppSelector((state) => state.lessons);
+  const { token } = useAppSelector((state) => state.auth);
   const [search, setSearch] = useState("");
   useEffect(() => {
     dispatch(fetchLessons({ token }));
   }, [dispatch, token]);
   const handleSearch = () => {
     if (token) {
-      dispatch(fetchLessons({ token, title: search })); // Pass both token and title to the thunk
+      dispatch(fetchLessons({ token, title: search }));
     }
   };
   if (loading) return <p className="text-center py-8">Loading lessons...</p>;
@@ -42,7 +43,7 @@ const LessonsClient = () => {
       </div>
       <div className="grid gap-8 justify-center items-center  lg:grid-cols-2 xl:grid-cols-3">
         {lessons.length > 0 &&
-          lessons.map((lesson) => (
+          lessons.map((lesson: Lesson) => (
             <LessonCard key={lesson._id} lesson={lesson} />
           ))}
       </div>
