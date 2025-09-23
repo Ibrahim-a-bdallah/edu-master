@@ -52,7 +52,7 @@ const LessonsClient = () => {
           lessons.map((lesson: Lesson) => (
 
             <LessonCard key={lesson._id} lesson={lesson} />
-          ))) : (
+          ) : (
             search.trim().length > 0 && ( 
             <p className="text-center text-gray-500 col-span-full"> 
               No lessons found for "{search}"
