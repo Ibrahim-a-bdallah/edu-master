@@ -4,7 +4,7 @@ import api from "@/lib/axios";
 import React, { useEffect, useState } from "react";
 import ViewUserPopup from "@/components/popups/ViewUserPopup";
 import { useSelector } from "react-redux";
-import { RootState } from "@/store/store";
+import { RootState } from "@/store";
 type student = {
   _id: string;
   fullName: string;
