@@ -47,15 +47,16 @@ const LessonsClient = () => {
       </div>
 
       <div className="grid gap-8 justify-center items-center  lg:grid-cols-2 xl:grid-cols-3">
-        {lessons.length > 0
-          ? lessons.map((lesson: Lesson) => (
-              <LessonCard key={lesson._id} lesson={lesson} />
-            ))
-          : search.trim().length > 0 && (
-              <p className="text-center text-gray-500 col-span-full">
-                No lessons found for "{search}"
-              </p>
-            )}
+        {lessons.length > 0 &&
+          lessons.map((lesson: Lesson) => (
+            <LessonCard key={lesson._id} lesson={lesson} />
+          ))}
+
+        {search.trim().length > 0 && (
+          <p className="text-center text-gray-500 col-span-full">
+            No lessons found for "{search}"
+          </p>
+        )}
       </div>
     </div>
   );
