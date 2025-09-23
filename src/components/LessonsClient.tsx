@@ -9,6 +9,7 @@ const LessonsClient = () => {
   const { lessons, loading, error } = useAppSelector((state) => state.lessons); // Access lessons state
   const { token } = useAppSelector((state) => state.auth); // Access lessons state
   const[search , setSearch]=useState("")
+  console.log('lessons' , lessons);
   
   useEffect(() => {
     dispatch(fetchLessons({token}));
