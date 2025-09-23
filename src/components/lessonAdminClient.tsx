@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import { fetchAdminLessons } from "@/store/lessons/lessonAdminSlice";
 import LessonCard from "@/components/LessonCard";
 import { useAppDispatch, useAppSelector } from "../app/hooks/hooks";
+import { Lesson } from "@/app/types/lesson";
 
 const LessonsAdminClient = () => {
   const dispatch = useAppDispatch();
@@ -25,7 +26,7 @@ const LessonsAdminClient = () => {
       </h1>
       <div className="grid gap-8 justify-center items-center  lg:grid-cols-2 xl:grid-cols-3">
         {lessons.length > 0 &&
-          lessons.map((lesson) => (
+          lessons.map((lesson: Lesson) => (
             <LessonCard key={lesson._id} lesson={lesson} />
           ))}
       </div>
