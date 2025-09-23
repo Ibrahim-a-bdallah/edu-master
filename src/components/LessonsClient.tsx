@@ -7,17 +7,28 @@ import { Lesson } from "@/app/types/lesson";
 
 const LessonsClient = () => {
   const dispatch = useAppDispatch();
-  const { lessons, loading, error } = useAppSelector((state) => state.lessons);
-  const { token } = useAppSelector((state) => state.auth);
-  const [search, setSearch] = useState("");
+
+  const { lessons, loading, error } = useAppSelector((state) => state.lessons); // Access lessons state
+  const { token } = useAppSelector((state) => state.auth); // Access lessons state
+  const[search , setSearch]=useState("")
+  
   useEffect(() => {
-    dispatch(fetchLessons({ token }));
-  }, [dispatch, token]);
-  const handleSearch = () => {
-    if (token) {
-      dispatch(fetchLessons({ token, title: search }));
-    }
-  };
+    dispatch(fetchLessons({token}));
+  }, [dispatch , token]);
+
+  useEffect(() => {
+    if ( !token) return;
+  const handleSearch = setTimeout(() => { 
+      if (search.trim().length > 0) { 
+        dispatch(fetchLessons({ token, title: search }));
+      } else {
+        dispatch(fetchLessons({ token }));
+      }
+    }, 1000); // debounce time of 1 second because prevent too many requests
+    return () => clearTimeout(handleSearch);
+}, [dispatch, token, search]);
+
+
   if (loading) return <p className="text-center py-8">Loading lessons...</p>;
   if (error) return <p className="text-center py-8 text-red-500">{error}</p>;
 
@@ -34,18 +45,20 @@ const LessonsClient = () => {
           onChange={(e) => setSearch(e.target.value)} //update search state on input change
           className="flex-1  p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600"
         />
-        <button
-          onClick={handleSearch}
-          className="px-4 py-2 text-white rounded-lg bg-purple-600 hover:bg-purple-700 cursor-pointer"
-        >
-          Search
-        </button>
       </div>
+
       <div className="grid gap-8 justify-center items-center  lg:grid-cols-2 xl:grid-cols-3">
         {lessons.length > 0 &&
           lessons.map((lesson: Lesson) => (
+
             <LessonCard key={lesson._id} lesson={lesson} />
-          ))}
+          ))) : (
+            search.trim().length > 0 && ( 
+            <p className="text-center text-gray-500 col-span-full"> 
+              No lessons found for "{search}"
+            </p>
+          )
+          )}
       </div>
     </div>
   );
