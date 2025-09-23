@@ -10,24 +10,23 @@ const LessonsClient = () => {
 
   const { lessons, loading, error } = useAppSelector((state) => state.lessons); // Access lessons state
   const { token } = useAppSelector((state) => state.auth); // Access lessons state
-  const[search , setSearch]=useState("")
-  
-  useEffect(() => {
-    dispatch(fetchLessons({token}));
-  }, [dispatch , token]);
+  const [search, setSearch] = useState("");
 
   useEffect(() => {
-    if ( !token) return;
-  const handleSearch = setTimeout(() => { 
-      if (search.trim().length > 0) { 
+    dispatch(fetchLessons({ token }));
+  }, [dispatch, token]);
+
+  useEffect(() => {
+    if (!token) return;
+    const handleSearch = setTimeout(() => {
+      if (search.trim().length > 0) {
         dispatch(fetchLessons({ token, title: search }));
       } else {
         dispatch(fetchLessons({ token }));
       }
     }, 1000); // debounce time of 1 second because prevent too many requests
     return () => clearTimeout(handleSearch);
-}, [dispatch, token, search]);
-
+  }, [dispatch, token, search]);
 
   if (loading) return <p className="text-center py-8">Loading lessons...</p>;
   if (error) return <p className="text-center py-8 text-red-500">{error}</p>;
@@ -48,17 +47,15 @@ const LessonsClient = () => {
       </div>
 
       <div className="grid gap-8 justify-center items-center  lg:grid-cols-2 xl:grid-cols-3">
-        {lessons.length > 0 &&
-          lessons.map((lesson: Lesson) => (
-
-            <LessonCard key={lesson._id} lesson={lesson} />
-          ) : (
-            search.trim().length > 0 && ( 
-            <p className="text-center text-gray-500 col-span-full"> 
-              No lessons found for "{search}"
-            </p>
-          )
-          )}
+        {lessons.length > 0
+          ? lessons.map((lesson: Lesson) => (
+              <LessonCard key={lesson._id} lesson={lesson} />
+            ))
+          : search.trim().length > 0 && (
+              <p className="text-center text-gray-500 col-span-full">
+                No lessons found for "{search}"
+              </p>
+            )}
       </div>
     </div>
   );
