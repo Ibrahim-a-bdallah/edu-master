@@ -52,7 +52,7 @@ const LessonCard = ({ lesson }: LessonCardProps) => {
           {lesson.isPaid && (
             <Button
               onClick={() => handleCheckout(lesson)}
-              className="bg-purple-600 hover:bg-purple-700 w-full"
+              className="bg-purple-600 hover:bg-purple-700 w-full cursor-pointer"
             >
               Pay
             </Button>

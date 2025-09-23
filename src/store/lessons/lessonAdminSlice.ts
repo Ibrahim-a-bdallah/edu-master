@@ -1,6 +1,5 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import { Lesson } from "@/app/types/lesson";
-// import axios from "axios";
 import api from "@/lib/axios";
 
 interface LessonState {
@@ -13,44 +12,43 @@ const initialState: LessonState = {
   loading: false,
   error: null,
 };
-export const fetchLessons = createAsyncThunk<
-  Lesson[],
-  { token: string; title?: string }
->("lessons/fetchLessons", async ({ token, title }) => {
-  try {
-    const res = await api.get("/lesson/", {
-      headers: {
-        token: token || "",
+export const fetchAdminLessons = createAsyncThunk<Lesson[], string>(
+  "lessons/fetchAdminLessons",
+  async (token: string) => {
+    const res = await api.get("/lesson", {
+      headers: { token },
+      params: {
+        classLevel: "Grade 1 Secondary",
+        isPaid: true,
+        sortBy: "scheduledDate",
+        sortOrder: "asc",
       },
-      params: title ? { title } : {}, //if title is present add it to params
     });
     return res.data.data || [];
-  } catch (error: any) {
-    throw new Error(error.message || "Network error");
   }
-});
-const lessonSlice = createSlice({
+);
+const lessonAdminSlice = createSlice({
   name: "lessons",
   initialState,
   reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(fetchLessons.pending, (state) => {
+      .addCase(fetchAdminLessons.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
       .addCase(
-        fetchLessons.fulfilled,
+        fetchAdminLessons.fulfilled,
         (state, action: PayloadAction<Lesson[]>) => {
           state.loading = false;
           state.lessons = action.payload;
         }
       )
-      .addCase(fetchLessons.rejected, (state, action) => {
+      .addCase(fetchAdminLessons.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message || "Something went wrong";
       });
   },
 });
 
-export default lessonSlice.reducer;
+export default lessonAdminSlice.reducer;

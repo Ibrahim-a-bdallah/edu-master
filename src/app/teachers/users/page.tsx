@@ -23,7 +23,7 @@ const Students = () => {
   const [isEditPopupOpen, setIsEditPopupOpen] = useState(false);
 
   // Get token from Redux store
-  const { token } = useSelector((state: RootState) => state.auth);
+  const token = useSelector((state: RootState) => state.auth.tokan);
 
   const totalPages = Math.ceil(studentsData.length / studentS_PER_PAGE);
   const paginatedstudents = studentsData.slice(

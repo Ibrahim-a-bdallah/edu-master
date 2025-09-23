@@ -27,10 +27,8 @@ import Addexam from "@/components/exam/Addexam";
 
 export default function Page() {
   const dispatch = useAppDispatch();
+  const token = useAppSelector((state) => state.auth.token);
   const filteredExams = useAppSelector(selectFilteredExams) as Exam[];
-  const { token } = useAppSelector((state) => state.auth);
-
-  // const filteredExams = useAppSelector(selectFilteredExams);
   const loading = useAppSelector(selectLoading);
   const error = useAppSelector(selectError);
   const searchTerm = useAppSelector(selectSearchTerm);
@@ -42,9 +40,6 @@ export default function Page() {
   useEffect(() => {
     if (typeof token === "string" && token.trim()) {
       dispatch(fetchExams(token));
-      if (token) {
-        dispatch(fetchExams(token));
-      }
     }
   }, [dispatch, token]);
 
