@@ -19,7 +19,7 @@ export const fetchLessons = createAsyncThunk<Lesson[], string>(
     try {
       const res = await api.get("/lesson/", {
         headers: {
-          token: `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImlicmFoaW1hYmRhbGw2OTFAZ21haWwuY29tIiwiX2lkIjoiNjhjZmUwZGI4NmQ2Mzg2ZjQzNGEzOTVjIiwiaWF0IjoxNzU4NDU1MTgxLCJleHAiOjE3NTg1NDE1ODF9.laqvnUAwGNwSnB_El3yLDzZ5eRoiL_RdxerFmprpY4o`,
+          token: token || "",
         },
       });
       return res.data.data || [];

@@ -7,7 +7,13 @@ import {
   selectCurrentExam,
 } from "@/store/teachers/exams/examSlice";
 import { motion } from "framer-motion";
-import { FaCalendar, FaArrowLeft, FaArrowRight, FaTimes, FaCheck } from "react-icons/fa";
+import {
+  FaCalendar,
+  FaArrowLeft,
+  FaArrowRight,
+  FaTimes,
+  FaCheck,
+} from "react-icons/fa";
 import { MdOutlineAccessTime, MdDescription } from "react-icons/md";
 import { Exam } from "@/app/types/exams";
 
@@ -116,10 +122,7 @@ const Addexam: React.FC<ExamDrawerProps> = ({
   return (
     <div className="fixed inset-0 z-50 flex">
       {/* Overlay */}
-      <div
-        className="fixed inset-0 bg-black/50"
-        onClick={onClose}
-      />
+      <div className="fixed inset-0 bg-black/50" onClick={onClose} />
 
       {/* Drawer */}
       <motion.div
@@ -258,7 +261,10 @@ const Addexam: React.FC<ExamDrawerProps> = ({
                     onChange={handleChange}
                     className="h-5 w-5 text-main focus:ring-main border-gray-300 rounded"
                   />
-                  <label htmlFor="isPublished" className="ml-3 block text-sm text-gray-900">
+                  <label
+                    htmlFor="isPublished"
+                    className="ml-3 block text-sm text-gray-900"
+                  >
                     Publish exam immediately
                   </label>
                 </div>
@@ -305,16 +311,22 @@ const Addexam: React.FC<ExamDrawerProps> = ({
             {step === 4 && (
               <div className="space-y-6">
                 <div className="bg-gray-50 p-6 rounded-lg">
-                  <h3 className="text-lg font-semibold mb-4 text-main">Exam Summary</h3>
-                  
+                  <h3 className="text-lg font-semibold mb-4 text-main">
+                    Exam Summary
+                  </h3>
+
                   <div className="space-y-4">
                     <div className="flex items-start">
                       <div className="bg-main/10 p-2 rounded-full mr-3">
                         <MdDescription className="text-main text-lg" />
                       </div>
                       <div>
-                        <p className="text-sm font-medium text-gray-500">Title</p>
-                        <p className="font-medium">{formData.title || "Not provided"}</p>
+                        <p className="text-sm font-medium text-gray-500">
+                          Title
+                        </p>
+                        <p className="font-medium">
+                          {formData.title || "Not provided"}
+                        </p>
                       </div>
                     </div>
 
@@ -323,8 +335,12 @@ const Addexam: React.FC<ExamDrawerProps> = ({
                         <MdDescription className="text-main text-lg" />
                       </div>
                       <div>
-                        <p className="text-sm font-medium text-gray-500">Description</p>
-                        <p className="font-medium">{formData.description || "Not provided"}</p>
+                        <p className="text-sm font-medium text-gray-500">
+                          Description
+                        </p>
+                        <p className="font-medium">
+                          {formData.description || "Not provided"}
+                        </p>
                       </div>
                     </div>
 
@@ -333,29 +349,11 @@ const Addexam: React.FC<ExamDrawerProps> = ({
                         <MdOutlineAccessTime className="text-main text-lg" />
                       </div>
                       <div>
-                        <p className="text-sm font-medium text-gray-500">Duration</p>
-                        <p className="font-medium">{formData.duration} minutes</p>
-                      </div>
-                    </div>
-
-                    <div className="flex items-start">
-                      <div className="bg-main/10 p-2 rounded-full mr-3">
-                        <FaCheck className="text-main text-lg" />
-                      </div>
-                      <div>
-                        <p className="text-sm font-medium text-gray-500">Class Level</p>
-                        <p className="font-medium">{formData.classLevel || "Not provided"}</p>
-                      </div>
-                    </div>
-
-                    <div className="flex items-start">
-                      <div className="bg-main/10 p-2 rounded-full mr-3">
-                        <FaCalendar className="text-main text-lg" />
-                      </div>
-                      <div>
-                        <p className="text-sm font-medium text-gray-500">Date Range</p>
+                        <p className="text-sm font-medium text-gray-500">
+                          Duration
+                        </p>
                         <p className="font-medium">
-                          {formData.startDate || "Not set"} to {formData.endDate || "Not set"}
+                          {formData.duration} minutes
                         </p>
                       </div>
                     </div>
@@ -365,7 +363,38 @@ const Addexam: React.FC<ExamDrawerProps> = ({
                         <FaCheck className="text-main text-lg" />
                       </div>
                       <div>
-                        <p className="text-sm font-medium text-gray-500">Status</p>
+                        <p className="text-sm font-medium text-gray-500">
+                          Class Level
+                        </p>
+                        <p className="font-medium">
+                          {formData.classLevel || "Not provided"}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-start">
+                      <div className="bg-main/10 p-2 rounded-full mr-3">
+                        <FaCalendar className="text-main text-lg" />
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-gray-500">
+                          Date Range
+                        </p>
+                        <p className="font-medium">
+                          {formData.startDate || "Not set"} to{" "}
+                          {formData.endDate || "Not set"}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-start">
+                      <div className="bg-main/10 p-2 rounded-full mr-3">
+                        <FaCheck className="text-main text-lg" />
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-gray-500">
+                          Status
+                        </p>
                         <p className="font-medium">
                           {formData.isPublished ? (
                             <span className="text-green-600">Published</span>
@@ -380,7 +409,8 @@ const Addexam: React.FC<ExamDrawerProps> = ({
 
                 <div className="bg-blue-50 p-4 rounded-lg border border-blue-100">
                   <p className="text-sm text-blue-700">
-                    <strong>Note:</strong> Please review all details carefully before {mode === "add" ? "creating" : "updating"} the exam.
+                    <strong>Note:</strong> Please review all details carefully
+                    before {mode === "add" ? "creating" : "updating"} the exam.
                   </p>
                 </div>
               </div>

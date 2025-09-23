@@ -1,7 +1,7 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import { DropdownMenuCheckboxItemProps } from "@radix-ui/react-dropdown-menu"
+import * as React from "react";
+import { DropdownMenuCheckboxItemProps } from "@radix-ui/react-dropdown-menu";
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -9,17 +9,17 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { useAppDispatch } from "@/app/hooks/hooks"
+} from "@/components/ui/dropdown-menu";
+import { useAppDispatch } from "@/app/hooks/hooks";
 import { logout } from "@/store/auth/login/loginSlice";
 import LogoutButton from "../Sidebar/LogoutButton";
-type Checked = DropdownMenuCheckboxItemProps["checked"]
+type Checked = DropdownMenuCheckboxItemProps["checked"];
 
 export function DropdownMenuCheckboxes() {
-  const [showStatusBar, setShowStatusBar] = React.useState<Checked>(true)
-  const [showActivityBar, setShowActivityBar] = React.useState<Checked>(false)
-  const [showPanel, setShowPanel] = React.useState<Checked>(false)
-  
+  const [showStatusBar, setShowStatusBar] = React.useState<Checked>(true);
+  const [showActivityBar, setShowActivityBar] = React.useState<Checked>(false);
+  const [showPanel, setShowPanel] = React.useState<Checked>(false);
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -52,13 +52,11 @@ export function DropdownMenuCheckboxes() {
         </div>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56">
-        <p
-          className="text-lg flex justify-center hover:bg-[#9C6FE4] cursor-pointer py-2 rounded-md" 
-        >
+        <p className="text-lg flex justify-center hover:bg-[#9C6FE4] cursor-pointer py-2 rounded-md">
           SGINUP
         </p>
         <LogoutButton />
       </DropdownMenuContent>
     </DropdownMenu>
-  )
+  );
 }

@@ -27,11 +27,10 @@ import Addexam from "@/components/exam/Addexam";
 
 export default function Page() {
   const dispatch = useAppDispatch();
-  const token = useAppSelector((state) => state.authLoginSlice.tokan);
   const filteredExams = useAppSelector(selectFilteredExams) as Exam[];
   const { token } = useAppSelector((state) => state.auth);
 
-  const filteredExams = useAppSelector(selectFilteredExams);
+  // const filteredExams = useAppSelector(selectFilteredExams);
   const loading = useAppSelector(selectLoading);
   const error = useAppSelector(selectError);
   const searchTerm = useAppSelector(selectSearchTerm);
@@ -43,10 +42,10 @@ export default function Page() {
   useEffect(() => {
     if (typeof token === "string" && token.trim()) {
       dispatch(fetchExams(token));
-    if (token) {
-      dispatch(fetchExams(token));
+      if (token) {
+        dispatch(fetchExams(token));
+      }
     }
-  }, [dispatch, token]);
   }, [dispatch, token]);
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -75,7 +74,6 @@ export default function Page() {
       );
     }
     if (modalMode === "edit" && selectedExam) {
-      console.log("Selected Exam in Modal:", selectedExam);
       return (
         <Addexam
           isOpen={isModalOpen}

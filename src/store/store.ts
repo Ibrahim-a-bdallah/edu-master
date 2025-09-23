@@ -9,12 +9,13 @@ import authSlice from "./auth/forgetpassword";
 import examReducer from "./teachers/exams/examSlice";
 import signUpReducer from "./auth/register/registerSlice";
 import lessonSlice from "./lessons/lessonSlice";
+import profileSlice from "./profile/profileSlice";
 
 const persistConfig = {
   key: "root",
   storage,
   transforms: [encryptTransform],
-  whitelist: ["auth"], // هنا بتحدد أي Slice يتخزن
+  whitelist: ["auth", "profile"], // هنا بتحدد أي Slice يتخزن
 };
 
 // Combine reducers
@@ -24,6 +25,7 @@ const rootReducer = combineReducers({
   examSlice: examReducer,
   authSignUp: signUpReducer,
   lessons: lessonSlice,
+  profile: profileSlice,
 });
 
 // حل مشكلة الـ typing هنا
