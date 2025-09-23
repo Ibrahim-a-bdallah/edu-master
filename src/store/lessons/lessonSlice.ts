@@ -22,7 +22,7 @@ export const fetchLessons = createAsyncThunk<
       headers: {
         token: token || "",
       },
-      params: title ? { title } : {}, //if title is present add it to params
+      //params: title ? { title } : {}, //if title is present add it to params
     });
     return res.data.data || [];
   } catch (error: any) {
