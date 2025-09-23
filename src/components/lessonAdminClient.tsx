@@ -3,10 +3,13 @@ import { useEffect } from "react";
 import { fetchAdminLessons } from "@/store/lessons/lessonAdminSlice";
 import LessonCard from "@/components/LessonCard";
 import { useAppDispatch, useAppSelector } from "../app/hooks/hooks";
+import { Lesson } from "@/app/types/lesson";
 
 const LessonsAdminClient = () => {
   const dispatch = useAppDispatch();
-  const { lessons, loading, error } = useAppSelector((state) => state.lessonsAdmin); // Access lessons state
+  const { lessons, loading, error } = useAppSelector(
+    (state) => state.lessonsAdmin
+  ); // Access lessons state
   const { token } = useAppSelector((state) => state.auth); // Access lessons state
 
   useEffect(() => {
@@ -21,9 +24,9 @@ const LessonsAdminClient = () => {
       <h1 className="text-3xl font-bold mb-8 text-center text-gray-800">
         Lessons
       </h1>
-      <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-8 justify-center items-center  lg:grid-cols-2 xl:grid-cols-3">
         {lessons.length > 0 &&
-          lessons.map((lesson) => (
+          lessons.map((lesson: Lesson) => (
             <LessonCard key={lesson._id} lesson={lesson} />
           ))}
       </div>

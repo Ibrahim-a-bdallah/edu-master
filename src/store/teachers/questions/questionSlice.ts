@@ -1,7 +1,7 @@
 // store/teachers/questions/questionSlice.ts
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import api from "@/lib/axios";
-import { RootState } from "@/store/store";
+import { RootState } from "@/store";
 import { Question, QuestionState } from "@/app/types/questions";
 
 const initialState: QuestionState = {
@@ -158,12 +158,14 @@ const questionSlice = createSlice({
 
       // update question
       .addCase(updateQuestion.fulfilled, (state, action) => {
-        const idx = state.questions.findIndex((q) => q._id === action.payload._id);
+        const idx = state.questions.findIndex(
+          (q) => q._id === action.payload._id
+        );
         if (idx !== -1) {
           state.questions[idx] = action.payload;
         }
         applyFilters(state);
-        
+
         if (state.currentQuestion?._id === action.payload._id) {
           state.currentQuestion = action.payload;
         }
@@ -171,9 +173,11 @@ const questionSlice = createSlice({
 
       // delete question
       .addCase(deleteQuestion.fulfilled, (state, action) => {
-        state.questions = state.questions.filter((question) => question._id !== action.payload);
+        state.questions = state.questions.filter(
+          (question) => question._id !== action.payload
+        );
         applyFilters(state);
-        
+
         if (state.currentQuestion?._id === action.payload) {
           state.currentQuestion = null;
         }
@@ -184,27 +188,30 @@ const questionSlice = createSlice({
 // Helper function to apply filters
 const applyFilters = (state: QuestionState) => {
   let filtered = state.questions;
-  
+
   // Apply search filter
   if (state.searchTerm) {
-    filtered = filtered.filter(
-      (question) =>
-        question.text.toLowerCase().includes(state.searchTerm.toLowerCase())
+    filtered = filtered.filter((question) =>
+      question.text.toLowerCase().includes(state.searchTerm.toLowerCase())
     );
   }
-  
+
   // Apply exam filter
   if (state.filterByExam) {
     filtered = filtered.filter(
       (question) => question.exam === state.filterByExam
     );
   }
-  
+
   state.filteredQuestions = filtered;
 };
 
-export const { setSearchTerm, setFilterByExam, clearError, setCurrentQuestion } =
-  questionSlice.actions;
+export const {
+  setSearchTerm,
+  setFilterByExam,
+  clearError,
+  setCurrentQuestion,
+} = questionSlice.actions;
 
 export const selectQuestions = (state: RootState) => state.questions.questions;
 export const selectFilteredQuestions = (state: RootState) =>

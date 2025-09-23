@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import Loading from "@/components/Loading";
 import { useSelector, useDispatch } from "react-redux";
-import { RootState } from "@/store/store";
+import { RootState } from "@/store";
 import api from "@/lib/axios";
 const Teachers = () => {
   const [totals, setTotals] = useState({ users: 0, lessons: 0, exams: 0 });

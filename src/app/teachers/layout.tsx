@@ -1,7 +1,9 @@
 "use client";
 
+import { AppSidebar } from "@/components/app-sidebar";
 import Header from "@/components/Header/page";
-import Sidebar from "@/components/Sidebar/page";
+
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 
 export default function TeachersLayout({
   children,
@@ -9,16 +11,13 @@ export default function TeachersLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex min-h-screen">
-      <Sidebar />
-
-      <div className="flex-1 flex flex-col">
-        {/* Header */}
+    <SidebarProvider>
+      <AppSidebar />
+      <main className="min-h-screen w-full ">
         <Header />
-
-        {/* Page Content */}
-        <main className="p-6">{children}</main>
-      </div>
-    </div>
+        <SidebarTrigger />
+        {children}
+      </main>
+    </SidebarProvider>
   );
 }
