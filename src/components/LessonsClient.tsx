@@ -10,24 +10,23 @@ const LessonsClient = () => {
 
   const { lessons, loading, error } = useAppSelector((state) => state.lessons); // Access lessons state
   const { token } = useAppSelector((state) => state.auth); // Access lessons state
-  const [search, setSearch] = useState("");
 
+  const [search, setSearch] = useState("")
+  const [allLessons, setAllLessons] = useState<typeof lessons>([]);
+  // console.log('lessons' , lessons);
   useEffect(() => {
-    dispatch(fetchLessons({ token }));
+    const loadLessons = async () => {
+      if (!token) return;
+      const res: any = await dispatch(fetchLessons({ token }));
+      setAllLessons(res.payload);
+    };
+    loadLessons();
   }, [dispatch, token]);
 
-  useEffect(() => {
-    if (!token) return;
-    const handleSearch = setTimeout(() => {
-      if (search.trim().length > 0) {
-        dispatch(fetchLessons({ token, title: search }));
-      } else {
-        dispatch(fetchLessons({ token }));
-      }
-    }, 1000); // debounce time of 1 second because prevent too many requests
-    return () => clearTimeout(handleSearch);
-  }, [dispatch, token, search]);
 
+  const filteredLessons = allLessons.filter((lesson) => //filter lessons based on title
+    lesson.title.toLowerCase().includes(search.toLowerCase())
+  );
   if (loading) return <p className="text-center py-8">Loading lessons...</p>;
   if (error) return <p className="text-center py-8 text-red-500">{error}</p>;
 
@@ -41,22 +40,23 @@ const LessonsClient = () => {
           type="text"
           placeholder="Search by title"
           value={search}
-          onChange={(e) => setSearch(e.target.value)} //update search state on input change
+
+          onChange={(e) => setSearch(e.target.value)}  //update search state on input change
           className="flex-1  p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600"
         />
       </div>
-
-      <div className="grid gap-8 justify-center items-center  lg:grid-cols-2 xl:grid-cols-3">
-        {lessons.length > 0 &&
-          lessons.map((lesson: Lesson) => (
+      <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+        {filteredLessons.length > 0 ?
+          (filteredLessons.map((lesson) => (
             <LessonCard key={lesson._id} lesson={lesson} />
-          ))}
+          ))) : (
+            <p className="text-center text-gray-500 col-span-full">
+              {search.trim().length > 0
+                ? `No lessons found for "${search}"`
+                : "No lessons available."}
+            </p>
+          )}
 
-        {search.trim().length > 0 && (
-          <p className="text-center text-gray-500 col-span-full">
-            No lessons found for "{search}"
-          </p>
-        )}
       </div>
     </div>
   );

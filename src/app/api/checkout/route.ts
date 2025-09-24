@@ -20,7 +20,7 @@ export async function POST(req: Request) {
           quantity: 1,
         },
       ],
-      success_url: `${process.env.NEXT_PUBLIC_APP_URL}/success`, // Redirect after successful payment
+      success_url: `${process.env.NEXT_PUBLIC_APP_URL}/success?lessonId=${lesson._id}`, // Redirect after successful payment to success page with lessonId as query param
       cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/cancel`, // Redirect if payment is cancelled
     });
     return NextResponse.json({ url: session.url });
