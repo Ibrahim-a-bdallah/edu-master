@@ -11,6 +11,7 @@ const Teachers = () => {
 
   const { token } = useSelector((state: RootState) => state.auth);
 
+
   useEffect(() => {
     const fetchTotals = async () => {
       try {
