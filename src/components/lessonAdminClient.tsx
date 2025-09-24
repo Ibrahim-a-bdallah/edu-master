@@ -1,32 +1,66 @@
 "use client";
-import { useEffect, useState } from "react";
-import { fetchAdminLessons } from "@/store/lessons/lessonAdminSlice";
+import { useEffect, useState, useMemo, useCallback } from "react";
+import { fetchAdminLessonsPaginated } from "@/store/lessons/lessonAdminSlice";
 import LessonCard from "@/components/LessonCard";
 import { useAppDispatch, useAppSelector } from "../app/hooks/hooks";
 import { Lesson } from "@/app/types/lesson";
 
-const LessonsAdminClient = () => {
+const LessonsAdminClientWithPagination = () => {
   const dispatch = useAppDispatch();
-  const { lessons, loading, error } = useAppSelector(
+  const { lessons, loading, error, total, page, hasMore } = useAppSelector(
     (state) => state.lessonsAdmin
-  ); // Access lessons state
-  const { token } = useAppSelector((state) => state.auth); // Access lessons state
-  const [search, setSearch] = useState("");
-  const [allLessons, setAllLessons] = useState<typeof lessons>([]);
+  );
+  const { token } = useAppSelector((state) => state.auth);
 
+  const [search, setSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const limit = 20; // عدد الدروس في كل صفحة
+
+  // Debounce للبحث
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(search);
+      setCurrentPage(1); // العودة للصفحة الأولى عند البحث
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [search]);
+
+  // جلب البيانات مع Pagination
   useEffect(() => {
     const loadLessons = async () => {
       if (!token) return;
-      const res: any = await dispatch(fetchAdminLessons(token));
-      setAllLessons(res.payload); 
-    };
-    loadLessons();
-  }, [dispatch, token]);
-  const filteredLessons = allLessons.filter((lesson) =>
-    lesson.title.toLowerCase().includes(search.toLowerCase())
-  );
 
-  if (loading) return <p className="text-center py-8">Loading lessons...</p>;
+      await dispatch(
+        fetchAdminLessonsPaginated({
+          token,
+          page: currentPage,
+          limit,
+          title: debouncedSearch || undefined,
+        })
+      );
+    };
+
+    loadLessons();
+  }, [dispatch, token, currentPage, debouncedSearch]);
+
+  const handleNextPage = () => {
+    if (hasMore) {
+      setCurrentPage((prev) => prev + 1);
+    }
+  };
+
+  const handlePrevPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage((prev) => prev - 1);
+    }
+  };
+
+  if (loading && lessons.length === 0) {
+    return <p className="text-center py-8">Loading lessons...</p>;
+  }
+
   if (error) return <p className="text-center py-8 text-red-500">{error}</p>;
 
   return (
@@ -40,24 +74,53 @@ const LessonsAdminClient = () => {
           type="text"
           placeholder="Search by title"
           value={search}
-          onChange={(e) => setSearch(e.target.value)}  //update search state on input change
-          className="flex-1  p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600"
+          onChange={(e) => setSearch(e.target.value)}
+          className="flex-1 p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600"
         />
       </div>
-      <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-        {filteredLessons.length > 0 ?
-          (filteredLessons.map((lesson) => (
 
-            <LessonCard key={lesson._id} lesson={lesson} />
-          ))) : (
-            <p className="text-center text-gray-500 col-span-full">
-              {search.trim().length > 0
-                ? `No lessons found for "${search}"`
-                : "No lessons available."}
-            </p>
-          )}
+      <div className="mb-4 text-sm text-gray-600">
+        Showing {lessons.length} of {total} lessons (Page {currentPage})
       </div>
+
+      <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+        {lessons.length > 0 ? (
+          lessons.map((lesson: Lesson) => (
+            <LessonCard key={lesson._id} lesson={lesson} />
+          ))
+        ) : (
+          <p className="text-center text-gray-500 col-span-full">
+            {debouncedSearch.trim().length > 0
+              ? `No lessons found for "${debouncedSearch}"`
+              : "No lessons available."}
+          </p>
+        )}
+      </div>
+
+      {/* Pagination Controls */}
+      <div className="flex justify-center items-center gap-4 mt-8">
+        <button
+          onClick={handlePrevPage}
+          disabled={currentPage === 1 || loading}
+          className="bg-gray-300 px-4 py-2 rounded disabled:opacity-50"
+        >
+          Previous
+        </button>
+
+        <span className="text-gray-600">Page {currentPage}</span>
+
+        <button
+          onClick={handleNextPage}
+          disabled={!hasMore || loading}
+          className="bg-gray-300 px-4 py-2 rounded disabled:opacity-50"
+        >
+          Next
+        </button>
+      </div>
+
+      {loading && <p className="text-center py-4">Loading more lessons...</p>}
     </div>
   );
 };
-export default LessonsAdminClient;
+
+export default LessonsAdminClientWithPagination;

@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback, useMemo } from "react";
 import { fetchLessons } from "@/store/lessons/lessonSlice";
 import LessonCard from "@/components/LessonCard";
 import { useAppDispatch, useAppSelector } from "../app/hooks/hooks";
@@ -7,27 +7,50 @@ import { Lesson } from "@/app/types/lesson";
 
 const LessonsClient = () => {
   const dispatch = useAppDispatch();
-
-  const { lessons, loading, error } = useAppSelector((state) => state.lessons); // Access lessons state
-  const { token } = useAppSelector((state) => state.auth); // Access lessons state
+  const { lessons, loading, error } = useAppSelector((state) => state.lessons);
+  const { token } = useAppSelector((state) => state.auth);
 
   const [search, setSearch] = useState("");
-  const [allLessons, setAllLessons] = useState<typeof lessons>([]);
-  // console.log('lessons' , lessons);
+  const [debouncedSearch, setDebouncedSearch] = useState("");
+
+  // Debounce search input
   useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(search);
+    }, 300); // انتظر 300ms بعد توقف المستخدم عن الكتابة
+
+    return () => clearTimeout(timer);
+  }, [search]);
+
+  // جلب الدروس مرة واحدة فقط عند التحميل الأول
+  useEffect(() => {
+    if (!token || lessons.length > 0) return;
+
     const loadLessons = async () => {
-      if (!token) return;
-      const res: any = await dispatch(fetchLessons({ token }));
-      setAllLessons(res.payload);
+      await dispatch(fetchLessons({ token }));
     };
     loadLessons();
-  }, [dispatch, token]);
+  }, [dispatch, token, lessons.length]); // إضافة lessons.length للتحكم
 
-  const filteredLessons = allLessons.filter(
-    (
-      lesson: Lesson //filter lessons based on title
-    ) => lesson.title.toLowerCase().includes(search.toLowerCase())
-  );
+  // جلب الدروس عند البحث (مع debounce)
+  useEffect(() => {
+    if (!token || debouncedSearch.trim() === "") return;
+
+    const searchLessons = async () => {
+      await dispatch(fetchLessons({ token, title: debouncedSearch }));
+    };
+    searchLessons();
+  }, [dispatch, token, debouncedSearch]);
+
+  // استخدام useMemo للتصفية لتجنب إعادة الحساب غير الضرورية
+  const filteredLessons = useMemo(() => {
+    if (debouncedSearch.trim() === "") return lessons;
+
+    return lessons.filter((lesson: Lesson) =>
+      lesson.title.toLowerCase().includes(debouncedSearch.toLowerCase())
+    );
+  }, [lessons, debouncedSearch]);
+
   if (loading) return <p className="text-center py-8">Loading lessons...</p>;
   if (error) return <p className="text-center py-8 text-red-500">{error}</p>;
 
@@ -41,8 +64,8 @@ const LessonsClient = () => {
           type="text"
           placeholder="Search by title"
           value={search}
-          onChange={(e) => setSearch(e.target.value)} //update search state on input change
-          className="flex-1  p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600"
+          onChange={(e) => setSearch(e.target.value)}
+          className="flex-1 p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600"
         />
       </div>
       <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
@@ -52,8 +75,8 @@ const LessonsClient = () => {
           ))
         ) : (
           <p className="text-center text-gray-500 col-span-full">
-            {search.trim().length > 0
-              ? `No lessons found for "${search}"`
+            {debouncedSearch.trim().length > 0
+              ? `No lessons found for "${debouncedSearch}"`
               : "No lessons available."}
           </p>
         )}
@@ -61,4 +84,5 @@ const LessonsClient = () => {
     </div>
   );
 };
+
 export default LessonsClient;
