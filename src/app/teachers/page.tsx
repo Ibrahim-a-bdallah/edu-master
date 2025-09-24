@@ -9,7 +9,7 @@ const Teachers = () => {
   const [classLevels, setClassLevels] = useState<Record<string, number>>({});
   const [loading, setLoading] = useState(true);
 
-  const token = useSelector((state: RootState) => state.authLoginSlice.tokan);
+  const token = useSelector((state: RootState) => state.authSlice);
 
   useEffect(() => {
     const fetchTotals = async () => {

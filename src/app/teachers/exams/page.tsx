@@ -14,9 +14,6 @@ import {
   selectSearchTerm,
   selectActiveTab,
   deleteExam,
-  updateExam,
-  addExam,
-  selectCurrentExam,
   setCurrentExam,
 } from "@/store/teachers/exams/examSlice";
 import Loading from "@/components/Loading";
@@ -27,26 +24,20 @@ import Addexam from "@/components/exam/Addexam";
 
 export default function Page() {
   const dispatch = useAppDispatch();
-  const token = useAppSelector((state) => state.authLoginSlice.tokan);
+  const token = useAppSelector((state) => state.authSlice);
   const filteredExams = useAppSelector(selectFilteredExams) as Exam[];
-  const { token } = useAppSelector((state) => state.auth);
-
-  const filteredExams = useAppSelector(selectFilteredExams);
   const loading = useAppSelector(selectLoading);
   const error = useAppSelector(selectError);
   const searchTerm = useAppSelector(selectSearchTerm);
   const activeTab = useAppSelector(selectActiveTab);
-  const selectedExam = useAppSelector(selectCurrentExam) as Exam | null;
+  const selectedExam = useAppSelector(setCurrentExam) as Exam | null;
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalMode, setModalMode] = useState<"add" | "edit" | "details">("add");
 
   useEffect(() => {
     if (typeof token === "string" && token.trim()) {
       dispatch(fetchExams(token));
-    if (token) {
-      dispatch(fetchExams(token));
     }
-  }, [dispatch, token]);
   }, [dispatch, token]);
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -75,7 +66,6 @@ export default function Page() {
       );
     }
     if (modalMode === "edit" && selectedExam) {
-      console.log("Selected Exam in Modal:", selectedExam);
       return (
         <Addexam
           isOpen={isModalOpen}
@@ -91,7 +81,6 @@ export default function Page() {
           exam={selectedExam}
           onClose={() => {
             dispatch(setCurrentExam(null));
-
             setIsModalOpen(false);
           }}
           onDelete={handleDeleteExam}
@@ -117,11 +106,7 @@ export default function Page() {
           <h2 className="text-xl font-semibold text-red-600 mb-2">Error</h2>
           <p className="text-gray-600 mb-4">{String(error)}</p>
           <button
-            onClick={() =>
-              typeof token === "string" &&
-              token.trim() &&
-              dispatch(fetchExams(token))
-            }
+            onClick={() => typeof token === "string" && token.trim() && dispatch(fetchExams(token))}
             className="bg-main text-white px-4 py-2 rounded-lg hover:bg-main/90"
           >
             Try Again
@@ -152,9 +137,7 @@ export default function Page() {
         <div className="flex gap-4 md:gap-8 w-full md:w-auto overflow-x-auto pb-2 md:pb-0">
           <h2
             className={`text-lg md:text-xl cursor-pointer ${
-              activeTab === "scheduled"
-                ? "text-main border-b-2 border-main pb-4 md:pb-6 font-semibold"
-                : "text-[#333437]"
+              activeTab === "scheduled" ? "text-main border-b-2 border-main pb-4 md:pb-6 font-semibold" : "text-[#333437]"
             }`}
             onClick={() => handleTabChange("scheduled")}
           >
@@ -162,9 +145,7 @@ export default function Page() {
           </h2>
           <h2
             className={`text-lg md:text-xl cursor-pointer ${
-              activeTab === "history"
-                ? "text-main border-b-2 border-main pb-4 md:pb-6 font-semibold"
-                : "text-[#333437]"
+              activeTab === "history" ? "text-main border-b-2 border-main pb-4 md:pb-6 font-semibold" : "text-[#333437]"
             }`}
             onClick={() => handleTabChange("history")}
           >
@@ -205,9 +186,7 @@ export default function Page() {
               <div className="flex flex-col items-center justify-center text-gray-500 py-8">
                 <FaCalendar className="text-4xl mb-2" />
                 <p>
-                  {searchTerm
-                    ? `No exams found matching "${searchTerm}"`
-                    : "No scheduled exams available."}
+                  {searchTerm ? `No exams found matching "${searchTerm}"` : "No scheduled exams available."}
                 </p>
               </div>
             )}
