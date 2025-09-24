@@ -4,15 +4,15 @@ import actGetLogin from "./actGetLogin";
 interface LoginState {
   Loading: "idle" | "pending" | "succeeded" | "failed";
   errorMessage: string | null;
-  userData: any;
   token?: string | null;
+  role?: string | null;
 }
 
 const initialState: LoginState = {
   Loading: "idle",
   errorMessage: null,
-  userData: null,
   token: null,
+  role: null,
 };
 
 const loginSlice = createSlice({
@@ -20,7 +20,7 @@ const loginSlice = createSlice({
   initialState,
   reducers: {
     logout: (state) => {
-      state.userData = null;
+      state.role = null;
       state.token = null;
       state.errorMessage = null;
       state.Loading = "idle";
@@ -37,10 +37,10 @@ const loginSlice = createSlice({
     builder.addCase(actGetLogin.fulfilled, (state, action) => {
       state.Loading = "succeeded";
       if (action.payload) {
-        state.userData = action.payload.user;
+        state.role = action.payload.role;
         state.token = action.payload.token;
       } else {
-        state.userData = null;
+        state.role = null;
         state.token = null;
       }
     });

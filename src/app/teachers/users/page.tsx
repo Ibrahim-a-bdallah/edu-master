@@ -4,7 +4,7 @@ import api from "@/lib/axios";
 import React, { useEffect, useState } from "react";
 import ViewUserPopup from "@/components/popups/ViewUserPopup";
 import { useSelector } from "react-redux";
-import { RootState } from "@/store/store";
+import { RootState } from "@/store";
 type student = {
   _id: string;
   fullName: string;
@@ -23,7 +23,8 @@ const Students = () => {
   const [isEditPopupOpen, setIsEditPopupOpen] = useState(false);
 
   // Get token from Redux store
-  const token = useSelector((state: RootState) => state.authSlice);
+  const token = useSelector((state: RootState) => state.auth.token);
+
 
   const totalPages = Math.ceil(studentsData.length / studentS_PER_PAGE);
   const paginatedstudents = studentsData.slice(

@@ -24,7 +24,9 @@ import Addexam from "@/components/exam/Addexam";
 
 export default function Page() {
   const dispatch = useAppDispatch();
-  const token = useAppSelector((state) => state.authSlice);
+
+  const token = useAppSelector((state) => state.auth.token);
+
   const filteredExams = useAppSelector(selectFilteredExams) as Exam[];
   const loading = useAppSelector(selectLoading);
   const error = useAppSelector(selectError);

@@ -33,9 +33,15 @@ const formSchema = z.object({
 const Login = () => {
   const dispatch = useAppDispatch();
   const router = useRouter();
-  const { Loading, errorMessage, userData } = useAppSelector(
-    (state) => state.auth
-  );
+  // Define the type for your auth state (adjust fields as needed)
+  interface AuthState {
+    Loading: string;
+    errorMessage: string | null;
+    role: string | null;
+    // add other properties if needed
+  }
+
+  const { Loading, errorMessage, role } = useAppSelector((state) => state.auth);
 
   const [showPassword, setShowPassword] = useState(false);
   const [hasDisplayedError, setHasDisplayedError] = useState(false);
@@ -67,16 +73,16 @@ const Login = () => {
   }, [dispatch]);
 
   useEffect(() => {
-    if (Loading === "succeeded" && userData) {
+    if (Loading === "succeeded" && role) {
       toast.success("Login successful!");
 
-      if (userData.data.role === "admin") {
+      if (role === "admin") {
         router.push("/teachers");
-      } else if (userData.data.role === "user") {
+      } else if (role === "user") {
         router.push("/students");
       }
     }
-  }, [Loading, userData, router]);
+  }, [Loading, role, router]);
 
   // 1. Define form
   const form = useForm<z.infer<typeof formSchema>>({

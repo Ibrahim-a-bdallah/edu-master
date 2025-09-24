@@ -1,29 +1,28 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import { DropdownMenuCheckboxItemProps } from "@radix-ui/react-dropdown-menu"
+import * as React from "react";
+import { DropdownMenuCheckboxItemProps } from "@radix-ui/react-dropdown-menu";
 import {
   DropdownMenu,
-  DropdownMenuCheckboxItem,
   DropdownMenuContent,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { useAppDispatch } from "@/app/hooks/hooks"
-import { logout } from "@/store/auth/login/loginSlice";
+} from "@/components/ui/dropdown-menu";
 import LogoutButton from "../Sidebar/LogoutButton";
-type Checked = DropdownMenuCheckboxItemProps["checked"]
+import Link from "next/link";
+import { useAppSelector } from "@/app/hooks/hooks";
+type Checked = DropdownMenuCheckboxItemProps["checked"];
 
 export function DropdownMenuCheckboxes() {
-  const [showStatusBar, setShowStatusBar] = React.useState<Checked>(true)
-  const [showActivityBar, setShowActivityBar] = React.useState<Checked>(false)
-  const [showPanel, setShowPanel] = React.useState<Checked>(false)
-  
+  const role = useAppSelector((state) => state.auth.role);
+  const linked =
+    role === "admin"
+      ? "/teachers"
+      : role === "super-admin"
+      ? "/super-admin"
+      : "/students";
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        {/* <Button variant="outline">Open</Button> */}
         <div className="w-[73] h-[43] opacity-100 left-[1624px] top-[23px] flex gap-1 cursor-pointer">
           <svg
             width="27"
@@ -52,13 +51,13 @@ export function DropdownMenuCheckboxes() {
         </div>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56">
-        <p
-          className="text-lg flex justify-center hover:bg-[#9C6FE4] cursor-pointer py-2 rounded-md" 
-        >
-          SGINUP
-        </p>
+        <Link href={`${linked}/profile`}>
+          <p className="text-lg flex justify-center hover:bg-[#9C6FE4] cursor-pointer py-2 rounded-md">
+            Profile
+          </p>
+        </Link>
         <LogoutButton />
       </DropdownMenuContent>
     </DropdownMenu>
-  )
+  );
 }

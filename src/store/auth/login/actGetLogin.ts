@@ -1,3 +1,4 @@
+// store/auth/login/actGetLogin.ts
 import api from "@/lib/axios";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
@@ -11,18 +12,13 @@ const actGetLogin = createAsyncThunk(
   "auth/actGetLogin",
   async (data: LoginData, thunkAPI) => {
     try {
-      const RLogin = await api.post("/auth/login", data);
+      // ❌ الخطأ: /auth/login
+      // ✅ الصحيح: /api/auth/login
+      const RLogin = await axios.post("/api/auth/login", data);
 
-      if (RLogin.data.success) {
-        const token = RLogin.data.token;
-        const response = await api.get("/user", {
-          headers: {
-            token: token,
-          },
-        });
-        return { token, user: response.data };
-      }
+      return { role: RLogin.data.role, token: RLogin.data.token };
     } catch (error) {
+      console.error("❌ Login error:", error);
       if (axios.isAxiosError(error) && error.response) {
         return thunkAPI.rejectWithValue(error.response.data.message);
       }

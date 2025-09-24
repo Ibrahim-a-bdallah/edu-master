@@ -1,37 +1,51 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import { Lesson } from "@/app/types/lesson";
-import axios from "axios";
 import api from "@/lib/axios";
 
 interface LessonState {
   lessons: Lesson[];
   loading: boolean;
   error: string | null;
+  lastFetch: number; // إضافة timestamp للتحكم في التحديث
 }
+
 const initialState: LessonState = {
   lessons: [],
   loading: false,
   error: null,
+  lastFetch: 0,
 };
-export const fetchLessons = createAsyncThunk<Lesson[], string>(
-  "lessons/fetchLessons",
-  async (token: string) => {
-    try {
-      const res = await api.get("/lesson/", {
-        headers: {
-          token: `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImlicmFoaW1hYmRhbGw2OTFAZ21haWwuY29tIiwiX2lkIjoiNjhjZmUwZGI4NmQ2Mzg2ZjQzNGEzOTVjIiwiaWF0IjoxNzU4NDU1MTgxLCJleHAiOjE3NTg1NDE1ODF9.laqvnUAwGNwSnB_El3yLDzZ5eRoiL_RdxerFmprpY4o`,
-        },
-      });
-      return res.data.data || [];
-    } catch (error: any) {
-      throw new Error(error.message || "Network error");
-    }
+
+// إضافة cache لمدة 5 دقائق
+const CACHE_DURATION = 5 * 60 * 1000; // 5 دقائق
+
+export const fetchLessons = createAsyncThunk<
+  Lesson[],
+  { token: string; title?: string; forceRefresh?: boolean }
+>("lessons/fetchLessons", async ({ token, title, forceRefresh = false }) => {
+  try {
+    const params: any = {};
+    if (title) params.title = title;
+
+    const res = await api.get("/lesson/", {
+      headers: { token: token || "" },
+      params,
+    });
+    return res.data.data || [];
+  } catch (error: any) {
+    throw new Error(error.message || "Network error");
   }
-);
+});
+
 const lessonSlice = createSlice({
   name: "lessons",
   initialState,
-  reducers: {},
+  reducers: {
+    clearLessons: (state) => {
+      state.lessons = [];
+      state.lastFetch = 0;
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchLessons.pending, (state) => {
@@ -43,6 +57,7 @@ const lessonSlice = createSlice({
         (state, action: PayloadAction<Lesson[]>) => {
           state.loading = false;
           state.lessons = action.payload;
+          state.lastFetch = Date.now(); // تحديث وقت آخر جلب
         }
       )
       .addCase(fetchLessons.rejected, (state, action) => {
@@ -52,4 +67,5 @@ const lessonSlice = createSlice({
   },
 });
 
+export const { clearLessons } = lessonSlice.actions;
 export default lessonSlice.reducer;

@@ -10,11 +10,17 @@ import examReducer from "./teachers/exams/examSlice";
 import signUpReducer from "./auth/register/registerSlice";
 import lessonSlice from "./lessons/lessonSlice";
 
+import lessonAdminSlice from "./lessons/lessonAdminSlice";
+
+import questionReducer from "./teachers/questions/questionSlice";
+
+import profileSlice from "./profile/profileSlice";
+
 const persistConfig = {
   key: "root",
   storage,
   transforms: [encryptTransform],
-  whitelist: ["auth"], // هنا بتحدد أي Slice يتخزن
+  whitelist: ["auth", "profile"], // هنا بتحدد أي Slice يتخزن
 };
 
 // Combine reducers
@@ -24,6 +30,12 @@ const rootReducer = combineReducers({
   examSlice: examReducer,
   authSignUp: signUpReducer,
   lessons: lessonSlice,
+
+  lessonsAdmin: lessonAdminSlice,
+
+  questions: questionReducer,
+
+  profile: profileSlice,
 });
 
 // حل مشكلة الـ typing هنا
@@ -38,7 +50,5 @@ export const store = configureStore({
 });
 
 export const persistor = persistStore(store);
-
-// النوعين بتوع الـ state و الـ dispatch
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
