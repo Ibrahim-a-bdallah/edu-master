@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import api from "@/lib/axios";
-import { RootState } from "@/store/store";
+import { RootState } from "@/store";
 
 export interface Exam {
   _id: string;

@@ -3,10 +3,13 @@ import { useEffect, useState } from "react";
 import { fetchAdminLessons } from "@/store/lessons/lessonAdminSlice";
 import LessonCard from "@/components/LessonCard";
 import { useAppDispatch, useAppSelector } from "../app/hooks/hooks";
+import { Lesson } from "@/app/types/lesson";
 
 const LessonsAdminClient = () => {
   const dispatch = useAppDispatch();
-  const { lessons, loading, error } = useAppSelector((state) => state.lessonsAdmin); // Access lessons state
+  const { lessons, loading, error } = useAppSelector(
+    (state) => state.lessonsAdmin
+  ); // Access lessons state
   const { token } = useAppSelector((state) => state.auth); // Access lessons state
   const [search, setSearch] = useState("");
   const [allLessons, setAllLessons] = useState<typeof lessons>([]);
@@ -31,6 +34,7 @@ const LessonsAdminClient = () => {
       <h1 className="text-3xl font-bold mb-8 text-center text-gray-800">
         Lessons Admin
       </h1>
+
       <div className="flex gap-2 mb-6">
         <input
           type="text"
@@ -43,6 +47,7 @@ const LessonsAdminClient = () => {
       <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
         {filteredLessons.length > 0 ?
           (filteredLessons.map((lesson) => (
+
             <LessonCard key={lesson._id} lesson={lesson} />
           ))) : (
             <p className="text-center text-gray-500 col-span-full">

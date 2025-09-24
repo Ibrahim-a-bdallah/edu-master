@@ -6,20 +6,7 @@ import { logout } from "@/store/auth/login/loginSlice";
 const Students = () => {
   const dispatch = useAppDispatch();
 
-  return (
-    <div>
-      {" "}
-      <Link
-        href="/login"
-        className="font-semibold"
-        onClick={() => {
-          dispatch(logout());
-        }}
-      >
-        LOGOUT
-      </Link>
-    </div>
-  );
+  return <div></div>;
 };
 
 export default Students;

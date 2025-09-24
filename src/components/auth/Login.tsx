@@ -33,6 +33,14 @@ const formSchema = z.object({
 const Login = () => {
   const dispatch = useAppDispatch();
   const router = useRouter();
+  // Define the type for your auth state (adjust fields as needed)
+  interface AuthState {
+    Loading: string;
+    errorMessage: string | null;
+    role: string | null;
+    // add other properties if needed
+  }
+
   const { Loading, errorMessage, role } = useAppSelector((state) => state.auth);
 
   const [showPassword, setShowPassword] = useState(false);

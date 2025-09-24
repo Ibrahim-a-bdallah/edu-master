@@ -3,11 +3,14 @@ import { useEffect, useState } from "react";
 import { fetchLessons } from "@/store/lessons/lessonSlice";
 import LessonCard from "@/components/LessonCard";
 import { useAppDispatch, useAppSelector } from "../app/hooks/hooks";
+import { Lesson } from "@/app/types/lesson";
 
 const LessonsClient = () => {
   const dispatch = useAppDispatch();
+
   const { lessons, loading, error } = useAppSelector((state) => state.lessons); // Access lessons state
   const { token } = useAppSelector((state) => state.auth); // Access lessons state
+
   const [search, setSearch] = useState("")
   const [allLessons, setAllLessons] = useState<typeof lessons>([]);
   // console.log('lessons' , lessons);
@@ -19,6 +22,7 @@ const LessonsClient = () => {
     };
     loadLessons();
   }, [dispatch, token]);
+
 
   const filteredLessons = allLessons.filter((lesson) => //filter lessons based on title
     lesson.title.toLowerCase().includes(search.toLowerCase())
@@ -36,6 +40,7 @@ const LessonsClient = () => {
           type="text"
           placeholder="Search by title"
           value={search}
+
           onChange={(e) => setSearch(e.target.value)}  //update search state on input change
           className="flex-1  p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600"
         />
@@ -51,6 +56,7 @@ const LessonsClient = () => {
                 : "No lessons available."}
             </p>
           )}
+
       </div>
     </div>
   );
