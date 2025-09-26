@@ -1,101 +1,95 @@
+// components/LessonCard.tsx
 "use client";
 import { Lesson } from "@/app/types/lesson";
 import { handleCheckout } from "@/lib/checkout";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
+import UniversalVideoPlayer from "./YouTubeThumbnailPlayer";
+// import UniversalVideoPlayer from "./UniversalVideoPlayer";
 
 interface LessonCardProps {
   lesson: Lesson;
 }
 
 const LessonCard = ({ lesson }: LessonCardProps) => {
-  // استخدام useMemo لتجنب إعادة حساب paidLessons في كل render
-  const hasPaid = useMemo(() => {
-    const stored = localStorage.getItem("paidLessons");
-    const paidLessons = stored ? JSON.parse(stored) : [];
-    return paidLessons.includes(lesson._id);
+  const [hasPaid, setHasPaid] = useState(false);
+
+  const isUnlocked = useMemo(
+    () => !lesson.isPaid || hasPaid,
+    [lesson.isPaid, hasPaid]
+  );
+
+  useEffect(() => {
+    const checkPayment = () => {
+      const stored = localStorage.getItem("paidLessons");
+      const paidLessons = stored ? JSON.parse(stored) : [];
+      setHasPaid(paidLessons.includes(lesson._id));
+    };
+
+    checkPayment();
+    window.addEventListener("storage", checkPayment);
+    return () => window.removeEventListener("storage", checkPayment);
   }, [lesson._id]);
 
-  const isUnlocked = !lesson.isPaid || hasPaid;
-
-  // تحسين معالجة التاريخ
-  const formattedDate = useMemo(() => {
-    return lesson.scheduledDate
-      ? new Date(lesson.scheduledDate).toLocaleDateString("en-GB", {
-          day: "2-digit",
-          month: "short",
-          year: "numeric",
-        })
-      : "No schedule";
-  }, [lesson.scheduledDate]);
-
-  // تحسين معالجة الفيديو
-  const videoSrc = useMemo(() => {
-    return lesson.video.replace("watch?v=", "embed/");
-  }, [lesson.video]);
-
   return (
-    <Card className="rounded-2xl shadow-lg hover:shadow-xl transition flex flex-col">
+    <Card className="rounded-2xl shadow-lg hover:shadow-xl transition flex flex-col h-full">
       <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle className="text-lg font-semibold text-gray-800">
+        <CardTitle className="text-lg font-semibold text-gray-800 line-clamp-2">
           {lesson.title}
         </CardTitle>
-        <Badge variant="secondary" className="bg-blue-100 text-blue-700">
+        <Badge
+          variant="secondary"
+          className="bg-blue-100 text-blue-700 shrink-0"
+        >
           {lesson.classLevel}
         </Badge>
       </CardHeader>
 
-      <CardContent className="flex flex-col gap-3">
-        <p className="text-gray-600 line-clamp-3">{lesson.description}</p>
-        <p className="text-sm text-gray-500">{formattedDate}</p>
+      <CardContent className="flex flex-col gap-3 flex-grow">
+        <p className="text-gray-600 line-clamp-3 flex-grow">
+          {lesson.description}
+        </p>
 
-        <div>
+        <div className="text-sm text-gray-500">
+          {lesson.scheduledDate
+            ? new Date(lesson.scheduledDate).toLocaleDateString("en-GB", {
+                day: "2-digit",
+                month: "short",
+                year: "numeric",
+              })
+            : "No schedule"}
+        </div>
+
+        <div className="font-medium">
           {lesson.isPaid ? (
-            <span className="text-red-500 font-medium text-lg">
+            <span className="text-red-500 text-lg">
               Price: {lesson.price} EGP
             </span>
           ) : (
-            <span className="text-green-600 font-medium text-lg">
-              Free Lesson
-            </span>
+            <span className="text-green-600 text-lg">Free Lesson</span>
           )}
         </div>
 
-        <div className="flex flex-col gap-2 mt-2 relative">
-          <div className="relative">
-            <iframe
-              width="100%"
-              height="220"
-              src={videoSrc}
-              title={lesson.title}
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              className={`rounded-lg w-full h-[220px] ${
-                isUnlocked ? "" : "blur-md pointer-events-none"
-              }`}
-              allowFullScreen={isUnlocked}
-              loading="lazy" // إضافة lazy loading
-            ></iframe>
-            {!isUnlocked && (
-              <div className="absolute inset-0 flex items-center justify-center">
-                <span className="bg-purple-600 text-white px-4 py-2 rounded-lg shadow">
-                  Pay to Unlock
-                </span>
-              </div>
-            )}
-          </div>
+        <div className="flex flex-col gap-2 mt-auto">
+          {/* استخدام المكون العالمي */}
+          <UniversalVideoPlayer
+            videoUrl={lesson.video}
+            isUnlocked={isUnlocked}
+            title={lesson.title}
+          />
 
           {isUnlocked ? (
-            <Button className="bg-green-600 hover:bg-green-700 w-full cursor-pointer">
-              Watch
+            <Button className="bg-green-600 hover:bg-green-700 w-full transition-colors">
+              🎥 Watch Lesson
             </Button>
           ) : (
             <Button
               onClick={() => handleCheckout(lesson)}
-              className="bg-purple-600 hover:bg-purple-700 w-full cursor-pointer"
+              className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 w-full transition-all transform hover:scale-105"
             >
-              Pay
+              💳 Pay to Unlock
             </Button>
           )}
         </div>

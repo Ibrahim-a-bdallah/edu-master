@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState, useCallback, useMemo } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { fetchLessons } from "@/store/lessons/lessonSlice";
 import LessonCard from "@/components/LessonCard";
 import { useAppDispatch, useAppSelector } from "../app/hooks/hooks";
@@ -13,36 +13,30 @@ const LessonsClient = () => {
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
 
-  // Debounce search input
+  // ✅ Debounce للبحث
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedSearch(search);
-    }, 300); // انتظر 300ms بعد توقف المستخدم عن الكتابة
+    }, 300);
 
     return () => clearTimeout(timer);
   }, [search]);
 
-  // جلب الدروس مرة واحدة فقط عند التحميل الأول
+  // ✅ تحسين طلبات API
   useEffect(() => {
-    if (!token || lessons.length > 0) return;
-
     const loadLessons = async () => {
-      await dispatch(fetchLessons({ token }));
+      if (!token) return;
+
+      // جلب البيانات فقط إذا كانت فارغة
+      if (lessons.length === 0) {
+        await dispatch(fetchLessons({ token }));
+      }
     };
+
     loadLessons();
-  }, [dispatch, token, lessons.length]); // إضافة lessons.length للتحكم
+  }, [dispatch, token, lessons.length]);
 
-  // جلب الدروس عند البحث (مع debounce)
-  useEffect(() => {
-    if (!token || debouncedSearch.trim() === "") return;
-
-    const searchLessons = async () => {
-      await dispatch(fetchLessons({ token, title: debouncedSearch }));
-    };
-    searchLessons();
-  }, [dispatch, token, debouncedSearch]);
-
-  // استخدام useMemo للتصفية لتجنب إعادة الحساب غير الضرورية
+  // ✅ استخدام useMemo للتصفية
   const filteredLessons = useMemo(() => {
     if (debouncedSearch.trim() === "") return lessons;
 
@@ -59,6 +53,7 @@ const LessonsClient = () => {
       <h1 className="text-3xl font-bold mb-8 text-center text-gray-800">
         Lessons
       </h1>
+
       <div className="flex gap-2 mb-6">
         <input
           type="text"
@@ -68,6 +63,12 @@ const LessonsClient = () => {
           className="flex-1 p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600"
         />
       </div>
+
+      {/* ✅ إضافة مؤشر عدد الدروس */}
+      <div className="mb-4 text-sm text-gray-600">
+        Showing {filteredLessons.length} lessons
+      </div>
+
       <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
         {filteredLessons.length > 0 ? (
           filteredLessons.map((lesson: Lesson) => (
@@ -75,8 +76,8 @@ const LessonsClient = () => {
           ))
         ) : (
           <p className="text-center text-gray-500 col-span-full">
-            {debouncedSearch.trim().length > 0
-              ? `No lessons found for "${debouncedSearch}"`
+            {search.trim().length > 0
+              ? `No lessons found for "${search}"`
               : "No lessons available."}
           </p>
         )}

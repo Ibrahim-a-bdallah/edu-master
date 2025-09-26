@@ -4,57 +4,47 @@ import { useAppDispatch } from "@/app/hooks/hooks";
 import { logout } from "@/store/auth/login/loginSlice";
 import Link from "next/link";
 
-import { useRouter } from "next/navigation";
-import { useState } from "react";
-
 export default function LogoutButton() {
   const dispatch = useAppDispatch();
-  const router = useRouter();
-  const [isLoading, setIsLoading] = useState(false);
 
-  const handleLogout = async (e: React.MouseEvent) => {
-    e.preventDefault(); // منع الانتقال للرابط مباشرة
+  const handleLogout = (e: React.MouseEvent) => {
+    e.preventDefault();
 
-    if (isLoading) return;
-
-    setIsLoading(true);
-
+    // 1. تنظيف البيانات المحلية
     try {
-      // إرسال طلب logout للخادم
-      const response = await fetch("/api/auth/logout", {
-        method: "POST",
-      });
-
-      if (response.ok) {
-        // تحديث حالة Redux
-        dispatch(logout());
-
-        // التوجيه لصفحة Login
-        router.push("/login");
-        router.refresh(); // تحديث الصفحة
-      } else {
-        console.error("Logout failed");
-        // إذا فشل الطلب، نلغي الكوكيز من الجهة العميلة
-        dispatch(logout());
-        router.push("/login");
-      }
+      localStorage.removeItem("paidLessons");
+      localStorage.removeItem("authToken");
+      localStorage.removeItem("userData");
     } catch (error) {
-      console.error("Logout error:", error);
-      // في حالة خطأ، نلغي الكوكيز من الجهة العميلة
-      dispatch(logout());
-      router.push("/login");
-    } finally {
-      setIsLoading(false);
+      console.log("Cleanup error:", error);
     }
+
+    // 2. تحديث Redux state
+    dispatch(logout());
+
+    // 3. طلب API باستخدام Beacon (أسرع تقنية)
+    if (navigator.sendBeacon) {
+      navigator.sendBeacon("/api/auth/logout");
+    } else {
+      // Fallback لـ fetch مع keepalive
+      fetch("/api/auth/logout", {
+        method: "POST",
+        keepalive: true,
+        credentials: "include",
+      });
+    }
+
+    // 4. ✅ استخدام replace لمنع العودة للصفحة السابقة
+    window.location.replace("/login");
   };
 
   return (
     <Link
-      href="#"
+      href="/login"
       onClick={handleLogout}
-      className="w-full cursor-pointer flex justify-center hover:bg-[#9C6FE4] py-2 rounded-md disabled:opacity-50 transition-colors duration-200"
+      className="w-full cursor-pointer "
     >
-      {isLoading ? "LOGGING OUT..." : "LOGOUT"}
+      LOGOUT
     </Link>
   );
 }
