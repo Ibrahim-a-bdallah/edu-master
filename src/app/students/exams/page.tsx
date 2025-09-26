@@ -7,17 +7,23 @@ import { motion } from "framer-motion";
 import {
   fetchExams,
   setActiveTab,
-  selectLoading,
-  selectError,
   selectFilteredExams,
   selectActiveTab,
   deleteExam,
   setCurrentExam,
 } from "@/store/teachers/exams/examSlice";
+import {
+  submitExams,
+  startExam,
+  selectScoreExams,
+  selectRemainingTime,
+  selectLoading,
+  selectError,
+} from "@/store/studentsExam/studentsExamSlice";
 import Loading from "@/components/Loading";
-import StudentExamDetails from "@/components/exam/ExamDetails";
+import StudentExamDetails from "@/components/exam/StudentExamDetails";
 import { Exam } from "@/app/types/exams";
-import StudentExamCard from "@/components/exam/ExamCard";
+import StudentExamCard from "@/components/exam/StudentExamCart";
 import ScoreExam from "@/components/exam/ScoreExam";
 
 export default function Page() {
@@ -48,6 +54,15 @@ export default function Page() {
     setIsModalOpen(false);
   };
 
+  const handleSubmitExam = async (studentExamData:any) => {
+      await dispatch(submitExams({ studentExamData, token: token as string }));
+    };
+
+    const handleStartExam = async () => {
+        const examData = { };
+        await dispatch(startExam({ examData, token: token as string }));
+      };
+
   const renderModalContent = () => {
     if (modalMode === "score") {
       return (
@@ -68,20 +83,14 @@ export default function Page() {
             dispatch(setCurrentExam(null));
             setIsModalOpen(false);
           }}
+          onSubmit={handleSubmitExam}
           onDelete={handleDeleteExam}
-          onEdit={() => {
-            dispatch(setCurrentExam(selectedExam));
-            setIsModalOpen(true);
-          }}
-        />
+             
+            /> 
       );
     }
     return null;
   };
-
-  if (loading === "pending") {
-    return <Loading message="Loading Exams..." />;
-  }
 
   if (loading === "failed") {
     return (
@@ -139,10 +148,7 @@ export default function Page() {
                   <StudentExamCard
                     key={exam._id}
                     exam={exam}
-                    onViewDetails={() => {
-                      dispatch(setCurrentExam(exam));
-                      setIsModalOpen(true);
-                    }}
+                    onStart={handleStartExam}
                   />
                 ))}
               </div>

@@ -1,12 +1,17 @@
 import { Exam } from "@/app/types/exams";
 import { FaCalendar } from "react-icons/fa";
 import { MdOutlineAccessTime } from "react-icons/md";
-const ExamCard = ({
+import React, { useEffect } from "react";
+import { useAppDispatch } from "@/app/hooks/hooks";
+
+// const dispatch = useAppDispatch();
+
+const StudentExamCard = ({
   exam,
-  onViewDetails,
+  onStart,
 }: {
   exam: Exam;
-  onViewDetails: () => void;
+  onStart: () => void;
 }) => (
   <div className="border border-gray-300 rounded-2xl p-4 shadow-sm hover:shadow-md transition-shadow duration-300 flex flex-col h-full">
     <h3 className="text-lg font-semibold mb-2">{exam.title}</h3>
@@ -35,12 +40,13 @@ const ExamCard = ({
       <div className="h-full bg-main rounded-full" style={{ width: "70%" }} />
     </div>
     <button
-      onClick={onViewDetails}
+      onClick={onStart}
       className="bg-main text-white px-4 py-2 rounded-lg hover:bg-main/90 hover:scale-95 transition-colors text-center duration-300 cursor-pointer w-full mt-auto"
     >
-      View Details
+      Start Exam
     </button>
+    
   </div>
 );
 
-export default ExamCard;
+export default StudentExamCard;

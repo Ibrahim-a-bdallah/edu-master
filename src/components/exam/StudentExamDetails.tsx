@@ -3,26 +3,36 @@ import { MdOutlineAccessTime } from "react-icons/md";
 import { ImBin } from "react-icons/im";
 import { FaCalendar } from "react-icons/fa";
 import { RxCrossCircled } from "react-icons/rx";
-
 import { Exam } from "@/app/types/exams";
+import {selectRemainingTime} from "@/store/studentsExam/studentsExamSlice";
+import React, { useEffect} from "react";
+import { useAppDispatch, useAppSelector } from "@/app/hooks/hooks";
+import {getRemainingTime} from "@/store/studentsExam/studentsExamSlice";
 
-type ExamDetailsProps = {
+
+type StudentExamDetailsProps = {
   exam: Exam;
   onClose: () => void;
   onDelete: (id: string) => void;
-  onEdit: () => void;
+  onSubmit : (studentExamData:any) => Promise<void>; // Define the onSubmit prop type
 };
 
-export default function ExamDetails({
+export default function StudentExamDetails({
   exam,
   onClose,
   onDelete,
-  onEdit,
-}: ExamDetailsProps) {
-  const totalmarks = exam.questions.reduce((total, question) => {
+  onSubmit,
+}: StudentExamDetailsProps) {
+  const totalMarks = exam.questions.reduce((total, question) => {
     return total + (question as any).points;
   }, 0);
-
+  const remainingTime = useAppSelector(selectRemainingTime);
+  const dispatch = useAppDispatch();
+  const token = "your_auth_token"; 
+  const examId = exam._id;  
+useEffect(() => {
+    dispatch(getRemainingTime({ id: examId, token }));
+  }, [dispatch, examId, token]);
   return (
     <div className="flex flex-col gap-4 w-full h-full py-8 md:py-16 font-geist-sans">
       <div className="flex justify-between px-4 md:px-8">
@@ -36,21 +46,22 @@ export default function ExamDetails({
           onClick={() => onDelete(exam._id)}
           className="flex gap-4 cursor-pointer justify-center items-center border border-red-700 p-2 rounded-md hover:scale-95 text-red-700 transition-all duration-200"
         >
-          <ImBin className="text-2xl" /> <h1>delete</h1>
+          <ImBin className="text-2xl" /> <h1>Delete</h1>
         </button>
       </div>
 
       <div className="flex flex-col justify-between px-4 md:px-8">
+        <p>Remaining Time: {remainingTime as string}</p>
         <h1 className="text-2xl font-semibold">{exam.title}</h1>
-        <p className="text-gray-600 mb-1">Class level : {exam.classLevel}</p>
+        <p className="text-gray-600 mb-1">Class Level: {exam.classLevel}</p>
         <p className="text-gray-600 mb-1 flex-1">
-          Description : {exam.description}
+          Description: {exam.description}
         </p>
 
         <p className="text-gray-600 mb-1 mt-2">
-          Questions : {exam.questions.length}
+          Questions: {exam.questions.length}
         </p>
-        <p className="text-gray-600 mb-1 ">Total Marks: {totalmarks}</p>
+        <p className="text-gray-600 mb-1">Total Marks: {totalMarks}</p>
 
         <div className="flex items-center justify-between mt-2 max-w-1/3">
           <p className="text-gray-600">Passing Percentage</p>
@@ -74,12 +85,12 @@ export default function ExamDetails({
         </div>
       </div>
 
-      <div className="flex flex-col justify-between items-start px-4 md:px-8 w-full mt-4 ">
+      <div className="flex flex-col justify-between items-start px-4 md:px-8 w-full mt-4">
         <button
-          onClick={onEdit}
-          className="border border-blue-500 text-blue-500 py-2 px-4 rounded-md hover:bg-blue-500 hover:text-white transition-all duration-200 cursor-pointer"
+          onClick={onSubmit} 
+          className="border border-green-500 text-green-500 py-2 px-4 rounded-md hover:bg-green-500 hover:text-white transition-all duration-200 cursor-pointer"
         >
-          Edit
+          Submit
         </button>
       </div>
     </div>
