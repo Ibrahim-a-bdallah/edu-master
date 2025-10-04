@@ -21,7 +21,6 @@ import actGetLogin from "@/store/auth/login/actGetLogin";
 import { toast } from "sonner";
 import { resetError } from "@/store/auth/login/loginSlice";
 
-// Improved validation schema with clearer error messages
 const formSchema = z.object({
   email: z.string().email({ message: "Invalid email address" }),
   password: z
@@ -33,28 +32,23 @@ const formSchema = z.object({
 const Login = () => {
   const dispatch = useAppDispatch();
   const router = useRouter();
-  // Define the type for your auth state (adjust fields as needed)
-  interface AuthState {
-    Loading: string;
-    errorMessage: string | null;
-    role: string | null;
-    // add other properties if needed
-  }
 
-  const { Loading, errorMessage, role } = useAppSelector((state) => state.auth);
-
+  const {
+    Loading,
+    error: errorMessage,
+    role,
+  } = useAppSelector((state) => state.auth);
+  console.log(errorMessage);
   const [showPassword, setShowPassword] = useState(false);
   const [hasDisplayedError, setHasDisplayedError] = useState(false);
 
   const isLoading = Loading === "pending";
 
-  // إصلاح: استخدام useEffect لعرض الخطأ مرة واحدة فقط
   useEffect(() => {
     if (errorMessage && !hasDisplayedError) {
       toast.error(errorMessage);
       setHasDisplayedError(true);
 
-      // reset الخطأ بعد 3 ثواني
       const timer = setTimeout(() => {
         dispatch(resetError());
         setHasDisplayedError(false);
@@ -64,7 +58,6 @@ const Login = () => {
     }
   }, [errorMessage, hasDisplayedError, dispatch]);
 
-  // إصلاح: إضافة cleanup function لـ reset الحالة
   useEffect(() => {
     return () => {
       // تنظيف حالة الخطأ عند إلغاء mounting المكون
@@ -96,17 +89,9 @@ const Login = () => {
   // 2. Submit handler
   const onSubmit = useCallback(
     async (values: z.infer<typeof formSchema>) => {
-      // reset حالة الخطأ قبل محاولة جديدة
       dispatch(resetError());
       setHasDisplayedError(false);
-
-      try {
-        await dispatch(actGetLogin(values)).unwrap();
-      } catch (error) {
-        // Error is already handled in the slice
-        toast.error(`${error}`);
-        // console.error("Login failed:", error);
-      }
+      await dispatch(actGetLogin(values)).unwrap();
     },
     [dispatch]
   );

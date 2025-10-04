@@ -12,9 +12,34 @@ interface LoginResponse {
   role: string;
   token: string;
 }
+
 interface LoginError {
   error: string;
 }
+
+const getErrorMessage = (error: unknown): string => {
+  if (axios.isAxiosError(error)) {
+    if (error.response) {
+      const responseData = error.response.data as any;
+      return (
+        responseData?.error ||
+        responseData?.message ||
+        error.message ||
+        `Server error: ${error.response.status}`
+      );
+    }
+
+    if (error.request) {
+      return "No response from server - network error";
+    }
+  }
+
+  if (error instanceof Error) {
+    return error.message;
+  }
+
+  return "An unknown error occurred";
+};
 
 const actGetLogin = createAsyncThunk<
   LoginResponse,
@@ -22,17 +47,18 @@ const actGetLogin = createAsyncThunk<
   { rejectValue: LoginError }
 >("auth/actGetLogin", async (data, thunkAPI) => {
   try {
-    const RLogin = await api.post("/auth/login", data);
+    const response = await api.post<LoginResponse>("/auth/login", data);
 
-    return {
-      role: RLogin.data.role,
-      token: RLogin.data.token,
-    };
-  } catch (error: any) {
-    if (axios.isAxiosError(error) && error.response) {
-      return thunkAPI.rejectWithValue({ error: error.response.data.error });
+    if (!response.data.role || !response.data.token) {
+      return thunkAPI.rejectWithValue({
+        error: "Invalid response from server",
+      });
     }
-    return thunkAPI.rejectWithValue({ error: "An unknown error occurred" });
+
+    return response.data;
+  } catch (error) {
+    const errorMessage = getErrorMessage(error);
+    return thunkAPI.rejectWithValue({ error: errorMessage });
   }
 });
 
