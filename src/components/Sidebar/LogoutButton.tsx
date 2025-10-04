@@ -2,49 +2,65 @@
 
 import { useAppDispatch } from "@/app/hooks/hooks";
 import { logout } from "@/store/auth/login/loginSlice";
-import Link from "next/link";
+import { useCallback } from "react";
 
 export default function LogoutButton() {
   const dispatch = useAppDispatch();
 
-  const handleLogout = (e: React.MouseEvent) => {
-    e.preventDefault();
+  const handleLogout = useCallback(
+    async (e: React.MouseEvent) => {
+      e.preventDefault();
 
-    // 1. تنظيف البيانات المحلية
-    try {
-      localStorage.removeItem("paidLessons");
-      localStorage.removeItem("authToken");
-      localStorage.removeItem("userData");
-    } catch (error) {
-      console.log("Cleanup error:", error);
-    }
+      try {
+        // 1. طلب API للـ logout على السيرفر
+        await fetch("/api/auth/logout", {
+          method: "POST",
+          credentials: "include",
+        });
 
-    // 2. تحديث Redux state
-    dispatch(logout());
+        // 2. تنظيف التخزين المحلي
+        if (typeof window !== "undefined") {
+          localStorage.clear();
+          sessionStorage.clear();
 
-    // 3. طلب API باستخدام Beacon (أسرع تقنية)
-    if (navigator.sendBeacon) {
-      navigator.sendBeacon("/api/auth/logout");
-    } else {
-      // Fallback لـ fetch مع keepalive
-      fetch("/api/auth/logout", {
-        method: "POST",
-        keepalive: true,
-        credentials: "include",
-      });
-    }
+          // تنظيف جميع الـ cookies
+          const cookies = document.cookie.split(";");
+          for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i];
+            const eqPos = cookie.indexOf("=");
+            const name =
+              eqPos > -1 ? cookie.substr(0, eqPos).trim() : cookie.trim();
 
-    // 4. ✅ استخدام replace لمنع العودة للصفحة السابقة
-    window.location.replace("/login");
-  };
+            // حذف من جميع المسارات والنطاقات
+            document.cookie =
+              name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/";
+            document.cookie =
+              name +
+              "=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/;domain=" +
+              window.location.hostname;
+          }
+        }
+
+        // 3. تحديث Redux state
+        dispatch(logout());
+
+        // 4. الانتقال لصفحة login مع إعادة تحميل كامل
+        setTimeout(() => {
+          // إعادة تحميل كاملة لضمان تنظيف الـ middleware
+          window.location.replace(`/login?logout=${Date.now()}`);
+        }, 150);
+      } catch (error) {
+        console.error("Logout failed:", error);
+        // Fallback: الانتقال مباشرة لـ login
+        window.location.href = "/login";
+      }
+    },
+    [dispatch]
+  );
 
   return (
-    <Link
-      href="/login"
-      onClick={handleLogout}
-      className="w-full cursor-pointer "
-    >
+    <button onClick={handleLogout} className="w-full cursor-pointer">
       LOGOUT
-    </Link>
+    </button>
   );
 }

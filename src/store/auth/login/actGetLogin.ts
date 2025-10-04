@@ -1,5 +1,4 @@
 // store/auth/login/actGetLogin.ts
-import api from "@/lib/axios";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
@@ -47,7 +46,7 @@ const actGetLogin = createAsyncThunk<
   { rejectValue: LoginError }
 >("auth/actGetLogin", async (data, thunkAPI) => {
   try {
-    const response = await api.post<LoginResponse>("/auth/login", data);
+    const response = await axios.post<LoginResponse>("api/auth/login", data);
 
     if (!response.data.role || !response.data.token) {
       return thunkAPI.rejectWithValue({

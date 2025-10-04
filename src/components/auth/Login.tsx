@@ -38,11 +38,31 @@ const Login = () => {
     error: errorMessage,
     role,
   } = useAppSelector((state) => state.auth);
+
   console.log(errorMessage);
   const [showPassword, setShowPassword] = useState(false);
   const [hasDisplayedError, setHasDisplayedError] = useState(false);
 
   const isLoading = Loading === "pending";
+
+  // ✅ إضافة useEffect للتوجيه بعد نجاح الـ login
+  useEffect(() => {
+    if (Loading === "succeeded" && role) {
+      toast.success("Login successful!");
+      console.log("Login successful, role:", role);
+
+      // تأخير بسيط لضمان تحديث الـ cookies
+      setTimeout(() => {
+        if (role === "admin") {
+          router.replace("/teachers");
+        } else if (role === "user") {
+          router.replace("/students");
+        } else if (role === "super-admin") {
+          router.replace("/super-admin");
+        }
+      }, 100);
+    }
+  }, [Loading, role, router]);
 
   useEffect(() => {
     if (errorMessage && !hasDisplayedError) {
@@ -59,23 +79,8 @@ const Login = () => {
   }, [errorMessage, hasDisplayedError, dispatch]);
 
   useEffect(() => {
-    return () => {
-      // تنظيف حالة الخطأ عند إلغاء mounting المكون
-      dispatch(resetError());
-    };
+    dispatch(resetError());
   }, [dispatch]);
-
-  useEffect(() => {
-    if (Loading === "succeeded" && role) {
-      toast.success("Login successful!");
-
-      if (role === "admin") {
-        router.push("/teachers");
-      } else if (role === "user") {
-        router.push("/students");
-      }
-    }
-  }, [Loading, role, router]);
 
   // 1. Define form
   const form = useForm<z.infer<typeof formSchema>>({
@@ -97,7 +102,7 @@ const Login = () => {
   );
 
   return (
-    <div className="w-full max-w-md mx-auto p-6">
+    <div className="w-full max-w-md mx-auto p-6 ">
       <div className="mb-10 text-white">
         <h2 className="font-bold text-5xl mb-4">Login</h2>
         <p className="text-[#ffffffad] text-[16px]">
