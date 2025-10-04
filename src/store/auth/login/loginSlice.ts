@@ -47,7 +47,9 @@ const loginSlice = createSlice({
     builder.addCase(actGetLogin.rejected, (state, action) => {
       state.Loading = "failed";
       if (action.payload) {
-        state.error = action.payload.error;
+        state.error = action.payload.error; // ✅ دلوقتي TypeScript راضي
+      } else {
+        state.error = "Something went wrong";
       }
     });
   },

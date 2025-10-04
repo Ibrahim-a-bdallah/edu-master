@@ -8,23 +8,32 @@ interface LoginData {
   password: string;
 }
 
-const actGetLogin = createAsyncThunk(
-  "auth/actGetLogin",
-  async (data: LoginData, thunkAPI) => {
-    try {
-      const RLogin = await axios.post("/api/auth/login", data);
+interface LoginResponse {
+  role: string;
+  token: string;
+}
+interface LoginError {
+  error: string;
+}
 
-      return {
-        role: RLogin.data.role,
-        token: RLogin.data.token,
-      };
-    } catch (error) {
-      if (axios.isAxiosError(error) && error.response) {
-        return thunkAPI.rejectWithValue(error.response.data.error);
-      }
-      return thunkAPI.rejectWithValue("An unknown error occurred");
+const actGetLogin = createAsyncThunk<
+  LoginResponse,
+  LoginData,
+  { rejectValue: LoginError }
+>("auth/actGetLogin", async (data, thunkAPI) => {
+  try {
+    const RLogin = await api.post("/auth/login", data);
+
+    return {
+      role: RLogin.data.role,
+      token: RLogin.data.token,
+    };
+  } catch (error: any) {
+    if (axios.isAxiosError(error) && error.response) {
+      return thunkAPI.rejectWithValue({ error: error.response.data.error });
     }
+    return thunkAPI.rejectWithValue({ error: "An unknown error occurred" });
   }
-);
+});
 
 export default actGetLogin;
