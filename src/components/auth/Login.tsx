@@ -104,7 +104,8 @@ const Login = () => {
         await dispatch(actGetLogin(values)).unwrap();
       } catch (error) {
         // Error is already handled in the slice
-        console.error("Login failed:", error);
+        toast.error(`${error}`);
+        // console.error("Login failed:", error);
       }
     },
     [dispatch]

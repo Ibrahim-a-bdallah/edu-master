@@ -12,37 +12,40 @@ import {
   deleteExam,
   setCurrentExam,
 } from "@/store/teachers/exams/examSlice";
-import {
-  submitExams,
-  startExam,
-  selectScoreExams,
-  selectRemainingTime,
-  selectLoading,
-  selectError,
-} from "@/store/studentsExam/studentsExamSlice";
+import { submitExams, startExam } from "@/store/studentsExam/studentsExamSlice";
 import Loading from "@/components/Loading";
 import StudentExamDetails from "@/components/exam/StudentExamDetails";
 import { Exam } from "@/app/types/exams";
 import StudentExamCard from "@/components/exam/StudentExamCart";
 import ScoreExam from "@/components/exam/ScoreExam";
+import { redirect } from "next/navigation";
 
 export default function Page() {
   const dispatch = useAppDispatch();
-  const token = useAppSelector((state) => state.authSlice);
-  const loading = useAppSelector(selectLoading);
-  const error = useAppSelector(selectError);
-  const activeTab = useAppSelector(selectActiveTab);
-  const filteredExams = useAppSelector(selectFilteredExams) as Exam[];
-  const selectedExam = useAppSelector(setCurrentExam) as Exam | null;
+  const { token } = useAppSelector((state) => state.auth);
+
+  const {
+    loading,
+    error,
+    activeTab,
+    filteredExams,
+    searchTerm,
+    currentExam,
+    exams,
+  } = useAppSelector((state) => state.examSlice);
+
+  const selectedExam = useAppSelector(
+    (state) => state.examSlice.currentExam
+  ) as Exam | null;
+
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [modalMode, setModalMode] = useState<"score" >("score");
+  const [modalMode, setModalMode] = useState<"score">("score");
 
   useEffect(() => {
     if (typeof token === "string" && token.trim()) {
       dispatch(fetchExams(token));
     }
   }, [dispatch, token]);
-
 
   const handleTabChange = (tab: "scheduled" | "history") => {
     dispatch(setActiveTab(tab));
@@ -54,14 +57,14 @@ export default function Page() {
     setIsModalOpen(false);
   };
 
-  const handleSubmitExam = async (studentExamData:any) => {
-      await dispatch(submitExams({ studentExamData, token: token as string }));
-    };
+  const handleSubmitExam = async (studentExamData: any) => {
+    await dispatch(submitExams({ studentExamData, token: token as string }));
+  };
 
-    const handleStartExam = async () => {
-        const examData = { };
-        await dispatch(startExam({ examData, token: token as string }));
-      };
+  const handleStartExam = async (id: string) => {
+    await dispatch(startExam({ id, token: token as string }));
+    redirect(`http://localhost:3000/students/exams/${id}/start`);
+  };
 
   const renderModalContent = () => {
     if (modalMode === "score") {
@@ -85,8 +88,7 @@ export default function Page() {
           }}
           onSubmit={handleSubmitExam}
           onDelete={handleDeleteExam}
-             
-            /> 
+        />
       );
     }
     return null;
@@ -99,7 +101,11 @@ export default function Page() {
           <h2 className="text-xl font-semibold text-red-600 mb-2">Error</h2>
           <p className="text-gray-600 mb-4">{String(error)}</p>
           <button
-            onClick={() => typeof token === "string" && token.trim() && dispatch(fetchExams(token))}
+            onClick={() =>
+              typeof token === "string" &&
+              token.trim() &&
+              dispatch(fetchExams(token))
+            }
             className="bg-main text-white px-4 py-2 rounded-lg hover:bg-main/90"
           >
             Try Again
@@ -121,7 +127,9 @@ export default function Page() {
         <div className="flex gap-4 md:gap-8 w-full md:w-auto overflow-x-auto pb-2 md:pb-0">
           <h2
             className={`text-lg md:text-xl cursor-pointer ${
-              activeTab === "scheduled" ? "text-main border-b-2 border-main pb-4 md:pb-6 font-semibold" : "text-[#333437]"
+              activeTab === "scheduled"
+                ? "text-main border-b-2 border-main pb-4 md:pb-6 font-semibold"
+                : "text-[#333437]"
             }`}
             onClick={() => handleTabChange("scheduled")}
           >
@@ -129,7 +137,9 @@ export default function Page() {
           </h2>
           <h2
             className={`text-lg md:text-xl cursor-pointer ${
-              activeTab === "history" ? "text-main border-b-2 border-main pb-4 md:pb-6 font-semibold" : "text-[#333437]"
+              activeTab === "history"
+                ? "text-main border-b-2 border-main pb-4 md:pb-6 font-semibold"
+                : "text-[#333437]"
             }`}
             onClick={() => handleTabChange("history")}
           >
@@ -144,11 +154,11 @@ export default function Page() {
           <div className="p-4 md:p-8">
             {filteredExams.length > 0 ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 items-stretch">
-                {filteredExams.map((exam) => (
+                {filteredExams.map((exam: Exam) => (
                   <StudentExamCard
                     key={exam._id}
                     exam={exam}
-                    onStart={handleStartExam}
+                    onStart={() => handleStartExam(exam._id)}
                   />
                 ))}
               </div>

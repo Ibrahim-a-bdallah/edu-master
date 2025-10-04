@@ -6,6 +6,7 @@ import { AppSidebar } from "@/components/app-sidebar";
 import Header from "@/components/Header/page";
 
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { Toaster } from "sonner";
 
 export default function TeachersLayout({
   children,
@@ -18,6 +19,7 @@ export default function TeachersLayout({
       <main className="min-h-screen w-full ">
         {/* <Header /> */}
         <SidebarTrigger />
+        {/* <Toaster /> */}
         {children}
       </main>
     </SidebarProvider>

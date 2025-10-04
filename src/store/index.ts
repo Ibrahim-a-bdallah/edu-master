@@ -7,13 +7,11 @@ import { combineReducers } from "redux";
 import authLoginSlice from "./auth/login/loginSlice";
 import authSlice from "./auth/forgetpassword";
 import examReducer from "./teachers/exams/examSlice";
+import examSlice from "./studentsExam/examSlice";
 import signUpReducer from "./auth/register/registerSlice";
 import lessonSlice from "./lessons/lessonSlice";
-
 import lessonAdminSlice from "./lessons/lessonAdminSlice";
-
 import questionReducer from "./teachers/questions/questionSlice";
-
 import profileSlice from "./profile/profileSlice";
 
 const persistConfig = {
@@ -30,12 +28,10 @@ const rootReducer = combineReducers({
   examSlice: examReducer,
   authSignUp: signUpReducer,
   lessons: lessonSlice,
-
   lessonsAdmin: lessonAdminSlice,
-
   questions: questionReducer,
-
   profile: profileSlice,
+  exam: examSlice,
 });
 
 // حل مشكلة الـ typing هنا

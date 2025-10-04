@@ -1,11 +1,11 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import api from "@/lib/axios";
-import { RootState } from "@/store/store";
+import { RootState } from "..";
 
 interface StudentExamState {
-  submittedExams: any[];  // Consider defining a specific type instead of 'any'
+  submittedExams: any[]; // Consider defining a specific type instead of 'any'
   remainingTime: string | null;
-  scoreExam: string | null;  // Fixed typo
+  scoreExam: string | null; // Fixed typo
   loading: "idle" | "pending" | "succeeded" | "failed";
   error: string | null;
   activeTab: "scheduled" | "history";
@@ -14,7 +14,7 @@ interface StudentExamState {
 const initialState: StudentExamState = {
   submittedExams: [],
   remainingTime: null,
-  scoreExam: null,  // Fixed typo
+  scoreExam: null, // Fixed typo
   loading: "idle",
   error: null,
   activeTab: "scheduled",
@@ -30,7 +30,9 @@ export const fetchScoreExam = createAsyncThunk(
       });
       return response.data.data;
     } catch (error: any) {
-      return rejectWithValue(error.response?.data?.message || "Failed to fetch score exam");
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to fetch score exam"
+      );
     }
   }
 );
@@ -40,12 +42,17 @@ export const getRemainingTime = createAsyncThunk(
   "studentsExams/getRemainingTime",
   async ({ id, token }: { id: string; token: string }, { rejectWithValue }) => {
     try {
-      const response = await api.get(`/studentExam/exams/remaining-time/${id}`, {
-        headers: { token },
-      });
+      const response = await api.get(
+        `/studentExam/exams/remaining-time/${id}`,
+        {
+          headers: { token },
+        }
+      );
       return response.data.data;
     } catch (error: any) {
-      return rejectWithValue(error.response?.data?.message || "Failed to fetch remaining exam time");
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to fetch remaining exam time"
+      );
     }
   }
 );
@@ -53,14 +60,22 @@ export const getRemainingTime = createAsyncThunk(
 // Submit exam
 export const submitExams = createAsyncThunk(
   "studentsExams/submitExam",
-  async ({ studentExamData, token }: { studentExamData: Partial<any>; token: string }, { rejectWithValue }) => {
+  async (
+    {
+      studentExamData,
+      token,
+    }: { studentExamData: Partial<any>; token: string },
+    { rejectWithValue }
+  ) => {
     try {
       const response = await api.post(`/studentExam/submit`, studentExamData, {
         headers: { token },
       });
       return response.data.data;
     } catch (error: any) {
-      return rejectWithValue(error.response?.data?.message || "Failed to submit exam");
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to submit exam"
+      );
     }
   }
 );
@@ -68,14 +83,22 @@ export const submitExams = createAsyncThunk(
 // Start exam
 export const startExam = createAsyncThunk(
   "studentsExams/startExam",
-  async ({ examData, token }: { examData: Partial<any>; token: string }, { rejectWithValue }) => {
+  async ({ id, token }: { id: string; token: string }, { rejectWithValue }) => {
     try {
-      const response = await api.post(`/studentExam/start`, examData, {
-        headers: { token },
-      });
+      const response = await api.post(
+        `/studentExam/start/${id}`,
+        {},
+        {
+          headers: {
+            token: token || "",
+          },
+        }
+      );
       return response.data.data;
     } catch (error: any) {
-      return rejectWithValue(error.response?.data?.message || "Failed to start exam");
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to start exam"
+      );
     }
   }
 );
@@ -100,7 +123,7 @@ const studentExamSlice = createSlice({
       })
       .addCase(fetchScoreExam.fulfilled, (state, action) => {
         state.loading = "succeeded";
-        state.scoreExam = action.payload;  // Fixed typo
+        state.scoreExam = action.payload; // Fixed typo
       })
       .addCase(fetchScoreExam.rejected, (state, action) => {
         state.loading = "failed";
@@ -113,16 +136,20 @@ const studentExamSlice = createSlice({
       // Submit exam
       .addCase(submitExams.fulfilled, (state, action) => {
         state.submittedExams.push(action.payload);
-      })
+      });
   },
 });
 
 export const { setActiveTab, clearError } = studentExamSlice.actions;
 
-export const selectScoreExams = (state: RootState) => state.studentExamSlice.scoreExam;  // Fixed typo
-export const selectRemainingTime = (state: RootState) => state.studentExamSlice.remainingTime;
-export const selectLoading = (state: RootState) => state.studentExamSlice.loading;
+export const selectScoreExams = (state: RootState) =>
+  state.studentExamSlice.scoreExam; // Fixed typo
+export const selectRemainingTime = (state: RootState) =>
+  state.studentExamSlice.remainingTime;
+// export const selectLoading = (state: RootState) =>
+//   state.studentExamSlice.loading;
 export const selectError = (state: RootState) => state.studentExamSlice.error;
-export const selectActiveTab = (state: RootState) => state.studentExamSlice.activeTab;
+export const selectActiveTab = (state: RootState) =>
+  state.studentExamSlice.activeTab;
 
 export default studentExamSlice.reducer;
