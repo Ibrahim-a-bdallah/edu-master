@@ -7,32 +7,22 @@ import { motion } from "framer-motion";
 import {
   fetchExams,
   setActiveTab,
-  selectFilteredExams,
-  selectActiveTab,
   deleteExam,
   setCurrentExam,
 } from "@/store/teachers/exams/examSlice";
 import { submitExams, startExam } from "@/store/studentsExam/studentsExamSlice";
-import Loading from "@/components/Loading";
 import StudentExamDetails from "@/components/exam/StudentExamDetails";
 import { Exam } from "@/app/types/exams";
 import StudentExamCard from "@/components/exam/StudentExamCart";
-import ScoreExam from "@/components/exam/ScoreExam";
 import { redirect } from "next/navigation";
 
 export default function Page() {
   const dispatch = useAppDispatch();
   const { token } = useAppSelector((state) => state.auth);
 
-  const {
-    loading,
-    error,
-    activeTab,
-    filteredExams,
-    searchTerm,
-    currentExam,
-    exams,
-  } = useAppSelector((state) => state.examSlice);
+  const { loading, error, activeTab, filteredExams } = useAppSelector(
+    (state) => state.examSlice
+  );
 
   const selectedExam = useAppSelector(
     (state) => state.examSlice.currentExam
@@ -69,12 +59,13 @@ export default function Page() {
   const renderModalContent = () => {
     if (modalMode === "score") {
       return (
-        <ScoreExam
-          isOpen={isModalOpen}
-          token={token as string}
-          onClose={() => setIsModalOpen(false)}
-          mode="score"
-        />
+        <div>ScoreExam</div>
+        // <ScoreExam
+        //   isOpen={isModalOpen}
+        //   token={token as string}
+        //   onClose={() => setIsModalOpen(false)}
+        //   mode="score"
+        // />
       );
     }
 
