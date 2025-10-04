@@ -67,7 +67,10 @@ export default function ExamTakingPage() {
     setSubmitting(true);
     try {
       const answersArray = Object.entries(answers).map(
-        ([questionId, selectedAnswer]) => ({ questionId, selectedAnswer })
+        ([questionId, selectedAnswer]) => ({
+          questionId,
+          selectedAnswer: String(selectedAnswer),
+        })
       );
 
       const response = await examService.submitExam(examId, answersArray);
