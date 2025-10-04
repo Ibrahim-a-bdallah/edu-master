@@ -15,6 +15,7 @@ import {
   selectActiveTab,
   deleteExam,
   setCurrentExam,
+  selectCurrentExam,
 } from "@/store/teachers/exams/examSlice";
 import Loading from "@/components/Loading";
 import ExamDetails from "@/components/exam/ExamDetails";
@@ -32,7 +33,7 @@ export default function Page() {
   const error = useAppSelector(selectError);
   const searchTerm = useAppSelector(selectSearchTerm);
   const activeTab = useAppSelector(selectActiveTab);
-  const selectedExam = useAppSelector(setCurrentExam) as Exam | null;
+  const selectedExam = useAppSelector(selectCurrentExam);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalMode, setModalMode] = useState<"add" | "edit" | "details">("add");
 
@@ -80,7 +81,7 @@ export default function Page() {
     if (modalMode === "details" && selectedExam) {
       return (
         <ExamDetails
-          exam={selectedExam}
+          exam={selectedExam.payload}
           onClose={() => {
             dispatch(setCurrentExam(null));
             setIsModalOpen(false);
@@ -108,7 +109,11 @@ export default function Page() {
           <h2 className="text-xl font-semibold text-red-600 mb-2">Error</h2>
           <p className="text-gray-600 mb-4">{String(error)}</p>
           <button
-            onClick={() => typeof token === "string" && token.trim() && dispatch(fetchExams(token))}
+            onClick={() =>
+              typeof token === "string" &&
+              token.trim() &&
+              dispatch(fetchExams(token))
+            }
             className="bg-main text-white px-4 py-2 rounded-lg hover:bg-main/90"
           >
             Try Again
@@ -139,7 +144,9 @@ export default function Page() {
         <div className="flex gap-4 md:gap-8 w-full md:w-auto overflow-x-auto pb-2 md:pb-0">
           <h2
             className={`text-lg md:text-xl cursor-pointer ${
-              activeTab === "scheduled" ? "text-main border-b-2 border-main pb-4 md:pb-6 font-semibold" : "text-[#333437]"
+              activeTab === "scheduled"
+                ? "text-main border-b-2 border-main pb-4 md:pb-6 font-semibold"
+                : "text-[#333437]"
             }`}
             onClick={() => handleTabChange("scheduled")}
           >
@@ -147,7 +154,9 @@ export default function Page() {
           </h2>
           <h2
             className={`text-lg md:text-xl cursor-pointer ${
-              activeTab === "history" ? "text-main border-b-2 border-main pb-4 md:pb-6 font-semibold" : "text-[#333437]"
+              activeTab === "history"
+                ? "text-main border-b-2 border-main pb-4 md:pb-6 font-semibold"
+                : "text-[#333437]"
             }`}
             onClick={() => handleTabChange("history")}
           >
@@ -188,7 +197,9 @@ export default function Page() {
               <div className="flex flex-col items-center justify-center text-gray-500 py-8">
                 <FaCalendar className="text-4xl mb-2" />
                 <p>
-                  {searchTerm ? `No exams found matching "${searchTerm}"` : "No scheduled exams available."}
+                  {searchTerm
+                    ? `No exams found matching "${searchTerm}"`
+                    : "No scheduled exams available."}
                 </p>
               </div>
             )}
