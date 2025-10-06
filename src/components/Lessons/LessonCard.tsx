@@ -6,7 +6,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useEffect, useMemo, useState } from "react";
-import UniversalVideoPlayer from "./YouTubeThumbnailPlayer";
+import UniversalVideoPlayer from "../YouTubeThumbnailPlayer";
 // import UniversalVideoPlayer from "./UniversalVideoPlayer";
 
 interface LessonCardProps {
@@ -73,7 +73,6 @@ const LessonCard = ({ lesson }: LessonCardProps) => {
         </div>
 
         <div className="flex flex-col gap-2 mt-auto">
-          {/* استخدام المكون العالمي */}
           <UniversalVideoPlayer
             videoUrl={lesson.video}
             isUnlocked={isUnlocked}

@@ -1,135 +1,182 @@
-import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
-import { Lesson } from "@/app/types/lesson";
-import api from "@/lib/axios";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createAsyncThunk } from "@reduxjs/toolkit";
+import {
+  getLessons,
+  updateLesson,
+  deleteLesson,
+  Lesson,
+  UpdateLessonData,
+  LessonsResponse,
+} from "@/lib/lessonService";
 
-interface LessonState {
-  lessons: Lesson[];
-  loading: boolean;
+// Get all lessons
+export const actGetLessons = createAsyncThunk(
+  "lessons/actGetLessons",
+  async (_, thunkAPI) => {
+    try {
+      const response = await getLessons();
+      return response;
+    } catch (error: any) {
+      if (error.response) {
+        return thunkAPI.rejectWithValue(error.response.data);
+      }
+      return thunkAPI.rejectWithValue({ message: "An unknown error occurred" });
+    }
+  }
+);
+
+// Update lesson
+export const actUpdateLesson = createAsyncThunk(
+  "lessons/actUpdateLesson",
+  async ({ id, data }: { id: string; data: UpdateLessonData }, thunkAPI) => {
+    try {
+      const response = await updateLesson(id, data);
+      return response;
+    } catch (error: any) {
+      if (error.response) {
+        return thunkAPI.rejectWithValue(error.response.data);
+      }
+      return thunkAPI.rejectWithValue({ message: "An unknown error occurred" });
+    }
+  }
+);
+
+// Delete lesson
+export const actDeleteLesson = createAsyncThunk(
+  "lessons/actDeleteLesson",
+  async (id: string, thunkAPI) => {
+    try {
+      const response = await deleteLesson(id);
+      return { ...response, id }; // إرجاع الـ id مع الاستجابة للحذف
+    } catch (error: any) {
+      if (error.response) {
+        return thunkAPI.rejectWithValue(error.response.data);
+      }
+      return thunkAPI.rejectWithValue({ message: "An unknown error occurred" });
+    }
+  }
+);
+
+interface LessonsState {
+  items: Lesson[];
+  loading: "idle" | "pending" | "succeeded" | "failed";
   error: string | null;
-  lastFetch: number;
-  searchTerm: string;
+  pagination: {
+    total: number;
+    page: number;
+    totalPages: number;
+  } | null;
+  updateLoading: "idle" | "pending" | "succeeded" | "failed";
+  updateError: string | null;
+  deleteLoading: "idle" | "pending" | "succeeded" | "failed";
+  deleteError: string | null;
 }
 
-const initialState: LessonState = {
-  lessons: [],
-  loading: false,
+const initialState: LessonsState = {
+  items: [],
+  loading: "idle",
   error: null,
-  lastFetch: 0,
-  searchTerm: "",
+  pagination: null,
+  updateLoading: "idle",
+  updateError: null,
+  deleteLoading: "idle",
+  deleteError: null,
 };
 
-// cache لمدة 10 دقائق للبيانات الإدارية
-const CACHE_DURATION = 10 * 60 * 1000;
-// إضافة pagination للـ admin slice
-export const fetchAdminLessonsPaginated = createAsyncThunk<
-  { lessons: Lesson[]; total: number; page: number; hasMore: boolean },
-  { token: string; page: number; limit: number; title?: string }
->(
-  "lessonsAdmin/fetchAdminLessonsPaginated",
-  async ({ token, page, limit, title }) => {
-    const params: any = {
-      classLevel: "Grade 1 Secondary",
-      isPaid: true,
-      sortBy: "scheduledDate",
-      sortOrder: "asc",
-      page,
-      limit,
-    };
-
-    if (title) {
-      params.title = title;
-    }
-
-    const res = await api.get("/lesson", {
-      headers: { token },
-      params,
-    });
-
-    return {
-      lessons: res.data.data || [],
-      total: res.data.total || 0,
-      page: res.data.page || 1,
-      hasMore: res.data.hasMore || false,
-    };
-  }
-);
-export const fetchAdminLessons = createAsyncThunk<
-  Lesson[],
-  { token: string; title?: string; forceRefresh?: boolean }
->(
-  "lessonsAdmin/fetchAdminLessons",
-  async ({ token, title, forceRefresh = false }) => {
-    const params: any = {
-      classLevel: "Grade 1 Secondary",
-      isPaid: true,
-      sortBy: "scheduledDate",
-      sortOrder: "asc",
-    };
-
-    if (title) {
-      params.title = title;
-    }
-
-    const res = await api.get("/lesson", {
-      headers: { token },
-      params,
-    });
-
-    return res.data.data || [];
-  }
-);
-
-const lessonAdminSlice = createSlice({
-  name: "lessonsAdmin",
+const lessonsSlice = createSlice({
+  name: "lessons",
   initialState,
   reducers: {
-    clearAdminLessons: (state) => {
-      state.lessons = [];
-      state.lastFetch = 0;
-      state.searchTerm = "";
+    clearLessonsError: (state) => {
+      state.error = null;
     },
-    setSearchTerm: (state, action: PayloadAction<string>) => {
-      state.searchTerm = action.payload;
+    clearUpdateError: (state) => {
+      state.updateError = null;
     },
-    // إضافة دالة لحذف درس محدد
-    removeLesson: (state, action: PayloadAction<string>) => {
-      state.lessons = state.lessons.filter(
-        (lesson) => lesson._id !== action.payload
-      );
+    clearDeleteError: (state) => {
+      state.deleteError = null;
     },
-    // إضافة دالة لتحديث درس
-    updateLesson: (state, action: PayloadAction<Lesson>) => {
-      const index = state.lessons.findIndex(
-        (lesson) => lesson._id === action.payload._id
-      );
-      if (index !== -1) {
-        state.lessons[index] = action.payload;
-      }
+    resetUpdateState: (state) => {
+      state.updateLoading = "idle";
+      state.updateError = null;
+    },
+    resetDeleteState: (state) => {
+      state.deleteLoading = "idle";
+      state.deleteError = null;
     },
   },
   extraReducers: (builder) => {
+    // Get Lessons
     builder
-      .addCase(fetchAdminLessons.pending, (state) => {
-        state.loading = true;
+      .addCase(actGetLessons.pending, (state) => {
+        state.loading = "pending";
         state.error = null;
       })
       .addCase(
-        fetchAdminLessons.fulfilled,
-        (state, action: PayloadAction<Lesson[]>) => {
-          state.loading = false;
-          state.lessons = action.payload;
-          state.lastFetch = Date.now();
-          state.error = null;
+        actGetLessons.fulfilled,
+        (state, action: PayloadAction<LessonsResponse>) => {
+          state.loading = "succeeded";
+          state.items = action.payload.data;
+          state.pagination = action.payload.pagination;
         }
       )
-      .addCase(fetchAdminLessons.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.error.message || "Something went wrong";
+      .addCase(actGetLessons.rejected, (state, action) => {
+        state.loading = "failed";
+        state.error = (action.payload as string) || "Failed to fetch lessons";
+      })
+
+      // Update Lesson
+      .addCase(actUpdateLesson.pending, (state) => {
+        state.updateLoading = "pending";
+        state.updateError = null;
+      })
+      .addCase(actUpdateLesson.fulfilled, (state, action) => {
+        state.updateLoading = "succeeded";
+        // تحديث الـ lesson في الـ state
+        const updatedLesson = action.payload.data;
+        const index = state.items.findIndex(
+          (lesson) => lesson._id === updatedLesson._id
+        );
+        if (index !== -1) {
+          state.items[index] = updatedLesson;
+        }
+      })
+      .addCase(actUpdateLesson.rejected, (state, action) => {
+        state.updateLoading = "failed";
+        state.updateError =
+          (action.payload as string) || "Failed to update lesson";
+      })
+
+      // Delete Lesson
+      .addCase(actDeleteLesson.pending, (state) => {
+        state.deleteLoading = "pending";
+        state.deleteError = null;
+      })
+      .addCase(actDeleteLesson.fulfilled, (state, action) => {
+        state.deleteLoading = "succeeded";
+        // إزالة الـ lesson من الـ state
+        const deletedId = action.payload.id;
+        state.items = state.items.filter((lesson) => lesson._id !== deletedId);
+
+        // تحديث الـ pagination
+        if (state.pagination) {
+          state.pagination.total -= 1;
+        }
+      })
+      .addCase(actDeleteLesson.rejected, (state, action) => {
+        state.deleteLoading = "failed";
+        state.deleteError =
+          (action.payload as string) || "Failed to delete lesson";
       });
   },
 });
 
-export const { clearAdminLessons, setSearchTerm, removeLesson, updateLesson } =
-  lessonAdminSlice.actions;
+export const {
+  clearLessonsError,
+  clearUpdateError,
+  clearDeleteError,
+  resetUpdateState,
+  resetDeleteState,
+} = lessonsSlice.actions;
 
-export default lessonAdminSlice.reducer;
+export default lessonsSlice.reducer;

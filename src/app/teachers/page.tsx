@@ -11,19 +11,18 @@ const Teachers = () => {
 
   const { token } = useSelector((state: RootState) => state.auth);
 
-
   useEffect(() => {
     const fetchTotals = async () => {
       try {
         const [usersRes, lessonsRes, examsRes] = await Promise.all([
           api.get("/admin/all-user", {
-            headers: { token },
+            headers: { token: `${token}` },
           }),
           api.get("/lesson/", {
-            headers: { token },
+            headers: { token: `${token}` },
           }),
           api.get("/exam", {
-            headers: { token },
+            headers: { token: `${token}` },
           }),
         ]);
         // Calculate class level distribution

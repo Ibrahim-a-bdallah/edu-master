@@ -1,21 +1,19 @@
 "use client";
 import { useEffect, useState, useMemo } from "react";
-import { fetchAdminLessons } from "@/store/lessons/lessonAdminSlice";
-import LessonCard from "@/components/LessonCard";
+import { fetchLessons } from "@/store/lessons/lessonSlice";
+import LessonCard from "@/components/Lessons/LessonCard";
+import { useAppDispatch, useAppSelector } from "../../app/hooks/hooks";
 import { Lesson } from "@/app/types/lesson";
-import { useAppDispatch, useAppSelector } from "@/app/hooks/hooks";
 
-const LessonsAdminClient = () => {
+const LessonsClient = () => {
   const dispatch = useAppDispatch();
-  const { lessons, loading, error } = useAppSelector(
-    (state) => state.lessonsAdmin
-  );
+  const { lessons, loading, error } = useAppSelector((state) => state.lessons);
   const { token } = useAppSelector((state) => state.auth);
 
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
 
-  // ✅ نفس تحسينات البحث
+  // ✅ Debounce للبحث
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedSearch(search);
@@ -24,20 +22,21 @@ const LessonsAdminClient = () => {
     return () => clearTimeout(timer);
   }, [search]);
 
-  // ✅ تحسين طلبات API للإدمن
+  // ✅ تحسين طلبات API
   useEffect(() => {
     const loadLessons = async () => {
       if (!token) return;
 
+      // جلب البيانات فقط إذا كانت فارغة
       if (lessons.length === 0) {
-        await dispatch(fetchAdminLessons(token));
+        await dispatch(fetchLessons({ token }));
       }
     };
 
     loadLessons();
   }, [dispatch, token, lessons.length]);
 
-  // ✅ استخدام useMemo
+  // ✅ استخدام useMemo للتصفية
   const filteredLessons = useMemo(() => {
     if (debouncedSearch.trim() === "") return lessons;
 
@@ -52,7 +51,7 @@ const LessonsAdminClient = () => {
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold mb-8 text-center text-gray-800">
-        Lessons Admin
+        Lessons
       </h1>
 
       <div className="flex gap-2 mb-6">
@@ -65,9 +64,9 @@ const LessonsAdminClient = () => {
         />
       </div>
 
-      {/* ✅ مؤشر للإدمن */}
+      {/* ✅ إضافة مؤشر عدد الدروس */}
       <div className="mb-4 text-sm text-gray-600">
-        Showing {filteredLessons.length} of {lessons.length} admin lessons
+        Showing {filteredLessons.length} lessons
       </div>
 
       <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
@@ -87,4 +86,4 @@ const LessonsAdminClient = () => {
   );
 };
 
-export default LessonsAdminClient;
+export default LessonsClient;

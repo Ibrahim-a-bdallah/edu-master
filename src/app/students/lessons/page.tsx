@@ -1,4 +1,4 @@
-import LessonsClient from "@/components/LessonsClient";
+import LessonsClient from "@/components/Lessons/LessonsClient";
 const Lessons = async () => {
   return <LessonsClient />;
 };

@@ -6,7 +6,7 @@ export function middleware(req: NextRequest) {
   const token = req.cookies.get("token")?.value;
   const role = req.cookies.get("role")?.value;
   const path = req.nextUrl.pathname;
-  console.log("ll");
+
   // Handle login and unauthorized pages
   if (path === "/login" || path === "/unauthorized") {
     if (token && path === "/login") {

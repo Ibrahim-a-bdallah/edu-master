@@ -7,7 +7,7 @@ const actgetProfile = createAsyncThunk(
     try {
       const response = await api.get("/user", {
         headers: {
-          token: token || "",
+          token: `${token}`,
         },
       });
       return response.data;
