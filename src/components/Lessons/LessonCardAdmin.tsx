@@ -42,7 +42,7 @@ import {
   DollarSign,
   Calendar,
 } from "lucide-react";
-import { useAppDispatch } from "@/app/hooks/hooks";
+import { useAppDispatch, useAppSelector } from "@/app/hooks/hooks";
 import {
   actUpdateLesson,
   actDeleteLesson,
@@ -55,7 +55,7 @@ interface LessonCardAdminProps {
 
 export default function LessonCardAdmin({ lesson }: LessonCardAdminProps) {
   const dispatch = useAppDispatch();
-
+  const { token } = useAppSelector((state) => state.auth);
   const [viewDialogOpen, setViewDialogOpen] = useState(false);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
@@ -74,7 +74,7 @@ export default function LessonCardAdmin({ lesson }: LessonCardAdminProps) {
     setIsLoading(true);
     try {
       await dispatch(
-        actUpdateLesson({ id: lesson._id, data: editForm })
+        actUpdateLesson({ token, id: lesson._id, data: editForm })
       ).unwrap();
       setEditDialogOpen(false);
     } catch (error) {
@@ -87,7 +87,7 @@ export default function LessonCardAdmin({ lesson }: LessonCardAdminProps) {
   const handleDelete = async () => {
     setIsLoading(true);
     try {
-      await dispatch(actDeleteLesson(lesson._id)).unwrap();
+      await dispatch(actDeleteLesson({ token, id: lesson._id })).unwrap();
       setDeleteDialogOpen(false);
     } catch (error) {
       console.error("Error deleting lesson:", error);
